@@ -55,7 +55,6 @@ void Layer::InputPrepare(vector<double>& input_data){
 
 void Layer::OutPut(vector<double>& input_data){
 	input = input_data;
-	input = input_data;
 	InputPrepare(input);
 	data_output = prod(weight,input);
 
@@ -66,15 +65,13 @@ void Layer::OutPut(vector<double>& input_data){
 
 void Layer::Update(matrix<double> &before_error,matrix<double> &before_old_weight,int layer_number,int before_dimension){
 	old_weight = weight;
-	//要書き直し
-	std::cout << "start layer update";
-	std::cout << before_error << std::endl;
 
 	for(int i = 1; i < before_dimension; i++){
 		double ek = 0.0;
 		for(int j = 0; j < layer_number; j++){
 			ek += before_error(j,i) * before_old_weight(j,i);
 		}
+
 		ek = ek * data_output[i-1] * (1 - data_output[i-1]);
 		for(int j = 0; j < input.size(); j++){
 			weight(i-1,j) += input[j] * ek * coefficient;

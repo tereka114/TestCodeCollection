@@ -19,15 +19,15 @@ public:
 	Layer middle_layer[300];
 	OutputLayer output_layer;
 
-	NeuralNetwork();
+	NeuralNetwork(int layer_num,int neuron_num,int training);
 	void Training(vector<vector<double> >& input_data,vector<vector<double> >& label_data);
 	void Test(vector<vector<double> >& input_data,vector<vector<double> >& label_data);
 };
 
-NeuralNetwork::NeuralNetwork(){
-	middle_layer_num = 1;
-	middle_neuron_num = 2;
-	training_time = 200000;
+NeuralNetwork::NeuralNetwork(int layer_num,int neuron_num,int training){
+	middle_layer_num = layer_num;
+	middle_neuron_num = neuron_num;
+	training_time = training;
 }
 
 void NeuralNetwork::Training(vector<vector<double> >& inputdata,vector<vector<double> >& labeldata){
@@ -35,7 +35,7 @@ void NeuralNetwork::Training(vector<vector<double> >& inputdata,vector<vector<do
 	label_data = labeldata;
 	srand((unsigned)time(NULL)); 
 	middle_layer[0].SetParameter(middle_neuron_num,input_data[0].size());
-	
+
 	for(int i = 1; i < middle_layer_num; i++){
 		middle_layer[i].SetParameter(middle_neuron_num,middle_neuron_num);
 	}
@@ -72,7 +72,7 @@ void NeuralNetwork::Training(vector<vector<double> >& inputdata,vector<vector<do
 				middle_layer[j].Update(error_temp,old_weight_temp,layer_number_temp,dimension_temp);
 				error_temp = middle_layer[j].error;
 				old_weight_temp = middle_layer[j].old_weight;
-				dimension_temp = output_layer.dimension;
+				dimension_temp = middle_layer[j].dimension;
 				layer_number_temp = middle_layer[j].number;
 			}
 		}
