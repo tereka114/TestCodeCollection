@@ -45,7 +45,7 @@ void Layer::SetParameter(int layer_number,int layer_dimension){
 
 void Layer::InputPrepare(vector<double>& input_data){
 	vector<double> temp(input_data.size()+1);
-	temp[0] = 1.0;
+	temp[0] = 0.8;
 	for(int i = 0; i < input_data.size(); i++){
 		temp[i+1] = input_data[i];
 	}

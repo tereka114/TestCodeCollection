@@ -62,7 +62,8 @@ void generete_and(vector<vector<double> >& input_data,vector<vector<double> >& l
 
 int main(int argc, char const *argv[])
 {
-	NeuralNetwork nn(2,2,600000);
+	NeuralNetwork nn;
+	nn.SetParameter(1,2,200000);
 	vector<vector<double> > input_data;
 	vector<vector<double> > label_data;
 	generete_xor(input_data,label_data);
