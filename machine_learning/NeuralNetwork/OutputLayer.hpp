@@ -26,6 +26,5 @@ double OutputLayer::Update(vector<double>& label){
 			total_error += error(i,j);
 		}
 	}
-
 	return total_error;
 }

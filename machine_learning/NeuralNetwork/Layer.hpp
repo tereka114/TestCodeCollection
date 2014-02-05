@@ -35,7 +35,7 @@ void Layer::SetParameter(int layer_number,int layer_dimension){
 	error.resize(layer_number,layer_dimension+1);
 	for(int i = 0; i < layer_dimension+1; i++){
 		for(int j = 0; j < layer_number; j++){
-			weight(j,i) = (double)rand()/RAND_MAX;
+			weight(j,i) = (double)rand()/RAND_MAX - 0.5;
 		}
 	}
 	number = layer_number;
@@ -45,7 +45,7 @@ void Layer::SetParameter(int layer_number,int layer_dimension){
 
 void Layer::InputPrepare(vector<double>& input_data){
 	vector<double> temp(input_data.size()+1);
-	temp[0] = 0.8;
+	temp[0] = 1.0;
 	for(int i = 0; i < input_data.size(); i++){
 		temp[i+1] = input_data[i];
 	}

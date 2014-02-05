@@ -24,6 +24,7 @@ public:
 	void SetParameter(int layer_num,int neuron_num,int training);
 	void Training(vector<vector<double> >& input_data,vector<vector<double> >& label_data);
 	void Test(vector<vector<double> >& input_data,vector<vector<double> >& label_data);
+	void MiddleOut(vector<vector<double> > &input);
 };
 
 void NeuralNetwork::SetParameter(int layer_num,int neuron_num,int training){
@@ -104,14 +105,16 @@ void NeuralNetwork::Test(vector<vector<double> >& test_data,vector<vector<double
 	}
 }
 //中間層の結果を出力する。
-// void NeuralNetwork::MiddleOut(vector<vector<double> > &input){
-// 	for(int i = 0; i < input.size(); i++){
-// 		middle_layer[0].OutPut(test_data[i]);
-// 		input_temp = middle_layer[0].data_output;
-// 		//各層の学習
-// 		for(int j = 1; j < middle_layer_num; j++){
-// 			middle_layer[j].OutPut(input_temp);
-// 			input_temp = middle_layer[j].data_output;
-// 		}
-// 	}
-// }
+void NeuralNetwork::MiddleOut(vector<vector<double> > &test_data){
+	vector<double> input_temp(test_data[0].size());
+	
+	for(int i = 0; i < test_data.size(); i++){
+		middle_layer[0].OutPut(test_data[i]);
+		input_temp = middle_layer[0].data_output;
+		//各層の学習
+		for(int j = 1; j < middle_layer_num; j++){
+			middle_layer[j].OutPut(input_temp);
+			input_temp = middle_layer[j].data_output;
+		}
+	}
+}
