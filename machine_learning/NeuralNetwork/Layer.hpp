@@ -33,6 +33,7 @@ double Layer::Sigmoid(double d){
 void Layer::SetParameter(int layer_number,int layer_dimension){
 	weight.resize(layer_number,layer_dimension+1);
 	error.resize(layer_number,layer_dimension+1);
+
 	for(int i = 0; i < layer_dimension+1; i++){
 		for(int j = 0; j < layer_number; j++){
 			weight(j,i) = (double)rand()/RAND_MAX - 0.5;
@@ -40,7 +41,7 @@ void Layer::SetParameter(int layer_number,int layer_dimension){
 	}
 	number = layer_number;
 	dimension = layer_dimension+1;
-	coefficient = 0.01;
+	coefficient = 0.001;
 }
 
 void Layer::InputPrepare(vector<double>& input_data){
@@ -73,7 +74,7 @@ void Layer::Update(matrix<double> &before_error,matrix<double> &before_old_weigh
 		}
 
 		ek = ek * data_output[i-1] * (1 - data_output[i-1]);
-		for(int j = 0; j < input.size(); j++){
+		for(int j = 1; j < input.size(); j++){
 			weight(i-1,j) += input[j] * ek * coefficient;
 			error(i-1,j) = ek;
 		}

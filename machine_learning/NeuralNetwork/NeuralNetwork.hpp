@@ -79,13 +79,18 @@ void NeuralNetwork::Training(vector<vector<double> >& inputdata,vector<vector<do
 				layer_number_temp = middle_layer[j].number;
 			}
 		}
-		std::cout << err << std::endl;
+		if((n % 50000) == 0){
+			std::cout << n << std::endl;
+			Test(inputdata,labeldata);
+		}
 	}
 }
 
 void NeuralNetwork::Test(vector<vector<double> >& test_data,vector<vector<double> >& label_data){
 	vector<double> input_temp(test_data[0].size());
 	std::cout << "test start!" << std::endl;
+	bool flag = true;
+	int cnt = 0;
 	for(int i = 0; i < test_data.size();i++){
 		//学習
 		middle_layer[0].OutPut(test_data[i]);
@@ -102,19 +107,44 @@ void NeuralNetwork::Test(vector<vector<double> >& test_data,vector<vector<double
 		std::cout << i << "番目のデータ"<< std::endl;
 		std::cout << test_data[i] << " " << label_data[i] << std::endl;
 		std::cout << output_layer.data_output << std::endl;
+		if(output_layer.data_output[0] > 0.5){
+			if(label_data[i][0] == 1){
+				std::cout << "True" << std::endl;
+				cnt++;
+			}else{
+				std::cout << "False" << std::endl;
+				flag = false;
+			}
+		}else{
+			if(label_data[i][0] == 0){
+				std::cout << "True" << std::endl;
+				cnt++;
+			}else{
+				std::cout << "False" << std::endl;
+				flag = false;
+			}
+		}
+	}
+	if(flag){
+		std::cout << "True" << " " << cnt << std::endl;
+	}else{
+		std::cout << "False" << " " << cnt << std::endl;
 	}
 }
-//中間層の結果を出力する。
+
+//中間層の結果を出力する。(BackPropAutoEncoder用)
 void NeuralNetwork::MiddleOut(vector<vector<double> > &test_data){
-	vector<double> input_temp(test_data[0].size());
-	
+	vector<vector<double> > result;
+
+	result.resize(test_data.size());
 	for(int i = 0; i < test_data.size(); i++){
+		result[i].resize(middle_layer_num);
+	}
+
+	for(int i = 0; i < test_data.size(); i++){
+		vector<double> input_temp(test_data[0].size());
 		middle_layer[0].OutPut(test_data[i]);
 		input_temp = middle_layer[0].data_output;
-		//各層の学習
-		for(int j = 1; j < middle_layer_num; j++){
-			middle_layer[j].OutPut(input_temp);
-			input_temp = middle_layer[j].data_output;
-		}
+		result[i] = input_temp;
 	}
 }
