@@ -5,11 +5,19 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
-#include "../linear_algebra.hpp"
+#include "../library/linear_algebra.hpp"
+#define NDEBUG
 
-double gaussian(vector<double> &data,vector<double> &mean,vector<matrix> &cov){
-	double temp1 = 1 / pow((1 / math.pi),(data.size() / 2.0);
+using namespace boost::numeric::ublas;
+
+double gaussian(vector<double> &data,vector<double> &mean,matrix<double> &cov){
+	double temp1 = 1.0 / (pow((2 * M_PI),(data.size() / 2.0)));
+	//std::cout << temp1 << std::endl;
 	double temp2 = 1 / pow(determinant(cov),0.5);
-	double temp3 = - 0.5 * prod(prod(data - mean,inverse(cov)),data-mean);
+	//std::cout << temp2 << std::endl;
+	//std::cout << prod(data - mean,invert(cov)) << std::endl;
+	double temp3 = - 0.5 * inner_prod(prod(data - mean,invert(cov)),data-mean);
+	//std::cout << temp1 << " " << temp2 << " " << temp3 << std::endl;
+	//std::cout << temp1 * temp2 * exp(temp3) << std::endl;
 	return temp1 * temp2 * exp(temp3);
 }

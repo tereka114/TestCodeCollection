@@ -25,9 +25,12 @@ int main(void){
 
 	determinant(mat2);
 
-	matrix<double> mat3(2,2);
+	matrix<double> mat3(2,2),mi;
 	mat3(0,0) = 1; mat3(0,1) = 2;
 	mat3(1,0) = 2; mat3(1,1) = 5;
 
 	inverse(mat3);
+
+	mi = invert(mat3);
+	std::cout << mi << std::endl;
 }

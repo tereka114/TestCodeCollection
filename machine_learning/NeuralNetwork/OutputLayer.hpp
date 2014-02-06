@@ -16,7 +16,6 @@ public:
 
 double OutputLayer::Update(vector<double>& label){
 	double total_error = 0.0;
-
 	old_weight = weight;
 	for(int i = 0; i < data_output.size(); i++){
 		double p = (label[i] - data_output[i]) * (1 - data_output[i]) * data_output[i];

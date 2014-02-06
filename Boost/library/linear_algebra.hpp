@@ -22,25 +22,45 @@ matrix<double> linear_pow(matrix<double> &mat,int time){
 	return result;
 }
 
-//
-matrix<double> inverse(matrix<double> &mat){
-	matrix<double> lu(mat);
-	permutation_matrix<> pm(mat.size1());
-	matrix<double> B = identity_matrix<double>(mat.size1());
+template <class M>
+matrix<double> invert(const M& m)
+{
+    namespace ublas = boost::numeric::ublas;
 
-	lu_factorize(lu,pm);
-	lu_substitute(lu,pm,B);
+    BOOST_UBLAS_CHECK(m.size1() == m.size2(), external_logic());
 
-	return B;
+    matrix<double>       lhs(m);
+    matrix<double>       rhs(identity_matrix<double>(m.size1()));
+    permutation_matrix<> pm(m.size1());
+
+    lu_factorize(lhs, pm);
+    lu_substitute(lhs, pm, rhs);
+
+    BOOST_UBLAS_CHECK(rhs.size1() == m.size1(), internal_logic());
+    BOOST_UBLAS_CHECK(rhs.size2() == m.size2(), internal_logic());
+
+#if BOOST_UBLAS_TYPE_CHECK
+    BOOST_UBLAS_CHECK(
+        detail::expression_type_check(
+            prod(m, rhs),
+            identity_matrix<typename M::value_type>(m.size1())
+        ),
+        internal_logic()
+    );
+#endif
+    matrix<double> mi;
+    mi.resize(rhs.size1(), rhs.size2(), false);
+    mi.assign(rhs);
+    // mi.assign_temporary(rhs);
+    return mi;
 }
+
 //行列式
-matrix<double> determinant(matrix<double> &mat){
+double determinant(matrix<double> &mat){
 	matrix<double> lu(mat);
 	permutation_matrix<> pm(mat.size1());
 
 	lu_factorize(lu,pm);
-	std::cout << lu << std::endl;
-	std::cout << pm << std::endl;
 
 	double det(1);
 
@@ -48,5 +68,5 @@ matrix<double> determinant(matrix<double> &mat){
 		det *= (i == pm(i)) ? +lu(i, i) : -lu(i, i);
 	}
 
-	std::cout << det << std::endl;
+	return det;
 }
