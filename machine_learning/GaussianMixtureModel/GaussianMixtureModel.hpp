@@ -25,7 +25,7 @@ public:
 	GaussianDistribution distribution[100]; //Another
 	std::vector<ublas::vector<double> > input_data;
 	int N; //データの数
-
+	
 	double pi[100];
 	int distribution_number; //正規分布の数
 	int dimension;
