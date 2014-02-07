@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include <vector>
 #include <stdlib.h>
 #include <algorithm>
 #include <boost/numeric/ublas/vector.hpp>
@@ -10,18 +11,19 @@
 
 #define NDEBUG
 
-using namespace boost::numeric::ublas;
+using namespace boost::numeric;
+using namespace std;
 
 class GaussianDistribution{
 public:
-	vector<double> mean;
-	matrix<double> cov;
+	ublas::vector<double> mean;
+	ublas::matrix<double> cov;
 };
 
 class GaussianMixtureModel{
 public:
 	GaussianDistribution distribution[100]; //Another
-	matrix<double> input_data;
+	std::vector<ublas::vector<double> > input_data;
 	int N; //データの数
 
 	double pi[100];
@@ -31,34 +33,38 @@ public:
 
 	void SetParameter(int number);
 	double Likelihood();
-	void Training(matrix<double> &input);
+	void Training(std::vector<ublas::vector<double> > &input);
 	void Scale();
 	void OutPutParam();
-	void Test(matrix<double> &test_data);
+	void Test(std::vector<ublas::vector<double> > &test_data);
 	~GaussianMixtureModel(){};
 };
 
 void GaussianMixtureModel::Scale(){
-	vector<double> mean(input_data.size2());
-	for(int i = 0; i < input_data.size2(); i++){
-		vector<double> vect_temp = column(input_data,i);
-		//std::cout << vect_temp << std::endl;
-		mean[i] = sum(vect_temp) / input_data.size1();
+	ublas::vector<double> mean(N);
+
+	for(int i = 0; i < dimension; i++){
+		double sum = 0.0;
+		for(int j = 0; j < N; j++){
+			sum += input_data[j][i];
+		}
+		//cout << vect_temp << endl;
+		mean[i] = sum / N;
 	}
 
-	vector<double> std(input_data.size2());
+	ublas::vector<double> std(dimension);
 
-	for(int i = 0; i < input_data.size2(); i++){
+	for(int i = 0; i < dimension; i++){
 		double sum = 0.0;
-		for(int j = 0; j < input_data.size1(); j++){
-			sum += pow(input_data(j,i) - mean[i],2);
+		for(int j = 0; j < N; j++){
+			sum += pow(input_data[j][i] - mean[i],2);
 		}
 		std[i] = sqrt(sum / N);
 	}
 
-	for(int i = 0; i < input_data.size2(); i++){
+	for(int i = 0; i < dimension; i++){
 		for(int j = 0; j < N; j++){
-			input_data(j,i) = (input_data(j,i) - mean[i]) / std[i];
+			input_data[j][i] = (input_data[j][i] - mean[i]) / std[i];
 		}
 	}
 }
@@ -76,7 +82,7 @@ void GaussianMixtureModel::SetParameter(int number){
 	//平均の初期化
 	srand((unsigned)time(NULL)); 
 	for(int i = 0; i < distribution_number; i++){
-		vector<double> vect(distribution_number);
+		ublas::vector<double> vect(distribution_number);
 
 		for(int j = 0; j < distribution_number; j++){
 			vect[j] = (double)rand()/RAND_MAX;
@@ -86,7 +92,7 @@ void GaussianMixtureModel::SetParameter(int number){
 	}
 	//共分散行列を初期化
 	for(int i = 0; i < distribution_number; i++){
-		matrix<double> mat(distribution_number,distribution_number);
+		ublas::matrix<double> mat(distribution_number,distribution_number);
 		for(int j = 0; j < mat.size1(); j++){
 			for(int k = 0; k < mat.size2(); k++){
 				mat(j,k) = (j == k) ? 1.0 : 0;
@@ -100,11 +106,10 @@ double GaussianMixtureModel::Likelihood(){
 	//対数尤度関数
 	double sum = 0.0;
 
-	for(int i = 0; i < input_data.size1(); i++){
+	for(int i = 0; i < N; i++){
 		double temp = 0.0;
 		for(int j = 0; j < distribution_number; j++){
-			vector<double> vect_temp = row(input_data,i);
-			temp += pi[j] * gaussian(vect_temp,distribution[j].mean,distribution[j].cov);
+			temp += pi[j] * gaussian(input_data[i],distribution[j].mean,distribution[j].cov);
 		}
 		sum += log(temp);
 	}
@@ -113,33 +118,31 @@ double GaussianMixtureModel::Likelihood(){
 }
 void GaussianMixtureModel::OutPutParam(){
 	for(int i = 0; i < distribution_number; i++){
-		std::cout << pi[i] << std::endl;
-		std::cout << distribution[i].mean << std::endl;
-		std::cout << distribution[i].cov << std::endl;
+		cout << pi[i] << endl;
+		cout << distribution[i].mean << endl;
+		cout << distribution[i].cov << endl;
 	}
 }
-void GaussianMixtureModel::Training(matrix<double> &input){
+void GaussianMixtureModel::Training(std::vector<ublas::vector<double> > &input){
 	input_data = input;
-	N = input_data.size1();
-	dimension = input_data.size2();
+	N = input_data.size();
+	dimension = input_data[0].size();
 
 	Scale();
 	double like = Likelihood();
+	ublas::vector<double> vect_temp(input_data[0].size());
 	//OutPutParam();
-	vector<double> vect_temp;
 	int cnt = 0;
 	while(1){
-		std::cout << cnt << " " << like << std::endl;
+		cout << cnt << " " << like << endl;
 		//Estep
 		for(int i = 0; i < N;i++){
 			double denominator = 0.0;
 			for(int j = 0; j < distribution_number; j++){
-				vect_temp = row(input_data,i);
-				denominator += pi[j] * gaussian(vect_temp,distribution[j].mean,distribution[j].cov);
+				denominator += pi[j] * gaussian(input_data[i],distribution[j].mean,distribution[j].cov);
 			}
 			for(int j = 0; j < distribution_number; j++){
-				vect_temp = row(input_data,i);
-				gamma[i][j] = pi[j] * gaussian(vect_temp,distribution[j].mean,distribution[j].cov) / denominator;
+				gamma[i][j] = pi[j] * gaussian(input_data[i],distribution[j].mean,distribution[j].cov) / denominator;
 			}
 		}
 
@@ -155,15 +158,15 @@ void GaussianMixtureModel::Training(matrix<double> &input){
 			}
 
 			for(int i = 0; i < N; i++){
-				distribution[k].mean += gamma[i][k] * row(input_data,i);
+				distribution[k].mean += gamma[i][k] * input_data[i];
 			}
 			distribution[k].mean /= Nk;
 
 
 			for(int i = 0; i < N; i++){
-				vect_temp = row(input_data,i) - distribution[k].mean;
+				vect_temp = input_data[i] - distribution[k].mean;
 
-				matrix<double> mat(vect_temp.size(),1);
+				ublas::matrix<double> mat(vect_temp.size(),1);
 				for(int j = 0; j < vect_temp.size(); j++){
 					mat(j,0) = vect_temp[j];
 				}
@@ -182,15 +185,14 @@ void GaussianMixtureModel::Training(matrix<double> &input){
 	}
 }
 
-void GaussianMixtureModel::Test(matrix<double> &test_data){
-	vector<double> vect_temp;
+void GaussianMixtureModel::Test(std::vector<ublas::vector<double> > &test_data){
+	ublas::vector<double> vect_temp;
 
-	for(int i = 0; i < test_data.size1(); i++){
+	for(int i = 0; i < test_data.size(); i++){
 		double max = 0.0;
 		int now_distribution = 0;
 		for(int j = 0; j < distribution_number; j++){
-			vect_temp = row(test_data,i);
-			double per = pi[j] * gaussian(vect_temp,distribution[j].mean,distribution[j].cov);
+			double per = pi[j] * gaussian(test_data[i],distribution[j].mean,distribution[j].cov);
 			if(per > max){max = per; now_distribution = j;}
 		}
 	}

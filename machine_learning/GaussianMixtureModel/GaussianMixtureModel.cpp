@@ -12,14 +12,13 @@
 #include <boost/algorithm/string.hpp>
 #include "./GaussianMixtureModel.hpp"
 
-using namespace boost::numeric::ublas;
+using namespace boost::numeric;
 
-matrix<double> fileread(){
+void fileread(std::vector<ublas::vector<double> > &input){
 	std::ifstream ifs("faithful.txt");
 	std::string str;
-	std::vector<std::vector<double> > temp_matrix;
+	ublas::vector<double> vect(2);
 	while(getline(ifs,str)){
-		std::vector<double> vect;
 		std::vector<std::string> v;
 
 		boost::algorithm::split(v, str, boost::is_any_of(" "));
@@ -28,24 +27,16 @@ matrix<double> fileread(){
 			double temp;
 			ss << v[i];
 			ss >> temp;
-			vect.push_back(temp);
+			vect[i] = temp;
 		}
-		temp_matrix.push_back(vect);
+		input.push_back(vect);
 	}
-
-	matrix<double> result(temp_matrix.size(),temp_matrix[0].size());
-
-	for(int i = 0; i < temp_matrix.size(); i++){
-		for(int j = 0; j < temp_matrix[i].size(); j++){
-			result(i,j) = temp_matrix[i][j];
-		}
-	}
-	return result;
 }
 
 int main(void){
 	GaussianMixtureModel gmm;
 	gmm.SetParameter(2);
-	matrix<double> input = fileread();
+	std::vector<ublas::vector<double> > input;
+	fileread(input);
 	gmm.Training(input);
 }
