@@ -52,7 +52,7 @@ void attributescale(std::vector<ublas::vector<double> > &data){
 		for(int j = 0; j < row; j++){
 			sum += pow(data[j][i] - mean[i],2.0);
 		}
-		std.push_back(sum / (row * col))
+		std.push_back(sum / (row * col));
 	}
 
 	for(int i = 0; i < col; i++){
@@ -62,13 +62,7 @@ void attributescale(std::vector<ublas::vector<double> > &data){
 	}
 }
 
-void jointvector(std::vector<ubas::vector<double> > &data,std::vector<ublas::vector<double> > add_data){
-	if(add_data.empty()){
-		cout << "no data(jointvector)" << endl;
-	}
-	if(data[0].size() != add_data[0].size()){
-		cout << "difference dimensions" << endl;
-	}
+void jointvector(std::vector<ublas::vector<double> > &data,std::vector<ublas::vector<double> > add_data){
 	int row = add_data.size();
 
 	for(int i = 0; i < row; i++){

@@ -13,7 +13,7 @@ class Sound(object):
 	def __init__(self, filename):
 		#音のパラメータ
 		self.filename = filename
-		self.period = 15 #音を取り出す秒数
+		self.period = 30 #音を取り出す秒数
 		self.filedata,self.fs = self.readFile(filename) #波形データとサンプリング周波数
 		self.length = len(self.filedata) #音の長さ
 		self.start = 0
@@ -37,6 +37,9 @@ class Sound(object):
 			self.resampleMp3(filename)
 			filename = filename.replace(".mp3",".wav")
 
+		os.system("sox -t raw -c 1 -r 16000 -b 16 -e signed-integer '%s' -t wav '%s'" %(filename,filename.replace(".wav","_temp.wav")))
+		filename = filename.replace(".wav","_temp.wav")
+
 		wf = wave.open(filename,"rb")
 		fs = wf.getframerate()
 		channnel= wf.getnchannels()
@@ -50,9 +53,10 @@ class Sound(object):
 		if start < 0: start = 0
 		if end > len(x)-1: end = len(x)-1
 
-		write_wave = wave.Wave_write("temp.wav")
+		write_wave = wave.Wave_write(filename.replace("_temp.wav","_write.wav"))
 		write_wave.setparams(wf.getparams())
 		write_wave.writeframes(x[start:end])
+		self.filename = filename.replace("_temp.wav","_write.wav")
 
 		self.start = start
 		self.end = end
@@ -148,9 +152,9 @@ class Sound(object):
 
 	def extractMFCC(self):
 		self.htkParameter()
-		mfccfile = self.filename.replace('.wav','.mfc')
-		tempfile = self.filename.replace('.wav','_temp.txt')
-		textfile = self.filename.replace('.wav','.txt')
+		mfccfile = self.filename.replace('_write.wav','.mfc')
+		tempfile = self.filename.replace('_write.wav','_temp.txt')
+		textfile = self.filename.replace('_write.wav','.txt')
 		f = open('codstr.scp','w')
 		s = self.filename + ' ' + mfccfile + '\n'
 		f.writelines(s)
@@ -161,11 +165,11 @@ class Sound(object):
 		self.formatExchange(tempfile,textfile)
 		self.mfcc = self.htkFileLoad(textfile)
 
-	def emd(self):
-		spectrum.emd(self.filedata)
+	# def emd(self):
+	# 	spectrum.emd(self.filedata)
 
 if __name__ == '__main__':
-	sound = Sound("sample_env/forest2.wav")
+	path = sys.argv[1]
+	sound = Sound(path)
 	sound.featureExtract()
 	sound.extractMFCC()
-	sound.emd()
