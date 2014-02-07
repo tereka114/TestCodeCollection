@@ -26,6 +26,7 @@ public:
 
 	double pi[100];
 	int distribution_number; //正規分布の数
+	int dimension;
 	double gamma[1000][100];
 
 	void SetParameter(int number);
@@ -33,6 +34,7 @@ public:
 	void Training(matrix<double> &input);
 	void Scale();
 	void OutPutParam();
+	void Test(matrix<double> &test_data);
 	~GaussianMixtureModel(){};
 };
 
@@ -51,11 +53,11 @@ void GaussianMixtureModel::Scale(){
 		for(int j = 0; j < input_data.size1(); j++){
 			sum += pow(input_data(j,i) - mean[i],2);
 		}
-		std[i] = sqrt(sum / input_data.size1());
+		std[i] = sqrt(sum / N);
 	}
 
 	for(int i = 0; i < input_data.size2(); i++){
-		for(int j = 0; j < input_data.size1(); j++){
+		for(int j = 0; j < N; j++){
 			input_data(j,i) = (input_data(j,i) - mean[i]) / std[i];
 		}
 	}
@@ -105,9 +107,6 @@ double GaussianMixtureModel::Likelihood(){
 			temp += pi[j] * gaussian(vect_temp,distribution[j].mean,distribution[j].cov);
 		}
 		sum += log(temp);
-		// std::cout << log(temp) << std::endl;
-		// std::cout << "result" << std::endl;
-		// std::cout << sum << std::endl;
 	}
 
 	return sum;
@@ -121,14 +120,16 @@ void GaussianMixtureModel::OutPutParam(){
 }
 void GaussianMixtureModel::Training(matrix<double> &input){
 	input_data = input;
-	Scale();
 	N = input_data.size1();
+	dimension = input_data.size2();
+
+	Scale();
 	double like = Likelihood();
 	//OutPutParam();
-	matrix<double> cov(input_data.size2(),input_data.size2());
 	vector<double> vect_temp;
+	int cnt = 0;
 	while(1){
-		std::cout << like << std::endl;
+		std::cout << cnt << " " << like << std::endl;
 		//Estep
 		for(int i = 0; i < N;i++){
 			double denominator = 0.0;
@@ -139,7 +140,6 @@ void GaussianMixtureModel::Training(matrix<double> &input){
 			for(int j = 0; j < distribution_number; j++){
 				vect_temp = row(input_data,i);
 				gamma[i][j] = pi[j] * gaussian(vect_temp,distribution[j].mean,distribution[j].cov) / denominator;
-				//std::cout << gamma[i][j] << std::endl;
 			}
 		}
 
@@ -153,13 +153,11 @@ void GaussianMixtureModel::Training(matrix<double> &input){
 			for(int i = 0; i < distribution_number; i++){
 				distribution[k].mean[i] = 0.0;
 			}
-			//std::cout << "amen" << " " << Nk << std::endl;
 
 			for(int i = 0; i < N; i++){
 				distribution[k].mean += gamma[i][k] * row(input_data,i);
 			}
 			distribution[k].mean /= Nk;
-			//std::cout << "amen" << " " << distribution[k].mean << std::endl;
 
 
 			for(int i = 0; i < N; i++){
@@ -176,10 +174,24 @@ void GaussianMixtureModel::Training(matrix<double> &input){
 
 			pi[k] = Nk / N;
 		}
-		OutPutParam();
-
+		//OutPutParam();
+		cnt++;
 		double new_like = Likelihood();
 		double diff = new_like - like;
 		like = new_like;
+	}
+}
+
+void GaussianMixtureModel::Test(matrix<double> &test_data){
+	vector<double> vect_temp;
+
+	for(int i = 0; i < test_data.size1(); i++){
+		double max = 0.0;
+		int now_distribution = 0;
+		for(int j = 0; j < distribution_number; j++){
+			vect_temp = row(test_data,i);
+			double per = pi[j] * gaussian(vect_temp,distribution[j].mean,distribution[j].cov);
+			if(per > max){max = per; now_distribution = j;}
+		}
 	}
 }
