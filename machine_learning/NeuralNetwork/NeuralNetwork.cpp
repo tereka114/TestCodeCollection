@@ -108,6 +108,6 @@ int main(int argc, char const *argv[])
 	generete_xor_many(input_data,label_data);
 
 	nn.Training(input_data,label_data);
-	nn.Test(input_data,label_data);
+	nn.Check(input_data,label_data);
 	return 0;
 }

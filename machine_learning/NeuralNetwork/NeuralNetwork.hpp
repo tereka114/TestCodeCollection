@@ -24,8 +24,9 @@ public:
 	NeuralNetwork(){};
 	void SetParameter(int layer_num,int neuron_num,int training);
 	void Training(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
-	void Test(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
-	void MiddleOut(std::vector<ublas::vector<double> > &input);
+	void Check(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
+	ublas::vector<double> Predict(ublas::vector<double> &test_data);
+	void MiddleOut(std::vector<ublas::vector<double> >& input);
 };
 
 void NeuralNetwork::SetParameter(int layer_num,int neuron_num,int training){
@@ -83,12 +84,28 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 		}
 		if((n % 50000) == 0){
 			std::cout << n << std::endl;
-			Test(inputdata,labeldata);
+			Check(inputdata,labeldata);
 		}
 	}
 }
 
-void NeuralNetwork::Test(std::vector<ublas::vector<double> >& test_data,std::vector<ublas::vector<double> >& label_data){
+ublas::vector<double> NeuralNetwork::Predict(ublas::vector<double> &test_data){
+	ublas::vector<double> input_temp(test_data.size());
+
+	middle_layer[0].OutPut(test_data);
+	input_temp = middle_layer[0].data_output;
+	//各層の学習
+	for(int j = 1; j < middle_layer_num; j++){
+		middle_layer[j].OutPut(input_temp);
+		input_temp = middle_layer[j].data_output;
+	}
+	//出力層
+	output_layer.OutPut(input_temp);
+	input_temp = output_layer.data_output;
+	return input_temp;
+}
+
+void NeuralNetwork::Check(std::vector<ublas::vector<double> >& test_data,std::vector<ublas::vector<double> >& label_data){
 	ublas::vector<double> input_temp(test_data[0].size());
 	std::cout << "test start!" << std::endl;
 	bool flag = true;

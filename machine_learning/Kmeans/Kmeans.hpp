@@ -88,7 +88,7 @@ void Kmeans::Training(std::vector<ublas::vector<double> > &input){
 
 	Setting();
 	Scale();
-	PrintOutParameter();
+	//PrintOutParameter();
 
 	double like; //指標
 	double before_like = 10000000; //新しい指標（更新先）
@@ -156,7 +156,7 @@ ublas::vector<int> Kmeans::Test(std::vector<ublas::vector<double> > &test){
 		int now_attribute = 0;
 		for(int j = 0; j < cluster; j++){
 			double temp_distance = euclidean_distance(test[i],centroid[j]);
-			cout << temp_distance << endl;
+			//cout << temp_distance << endl;
 			if(temp_distance < min_distance){
 				min_distance = temp_distance;
 				now_attribute = j;
