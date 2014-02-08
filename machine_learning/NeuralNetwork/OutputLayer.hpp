@@ -11,10 +11,10 @@ using namespace boost::numeric::ublas;
 
 class OutputLayer:public Layer{
 public:
-	double Update(vector<double>& label);
+	double Update(ublas::vector<double>& label);
 };
 
-double OutputLayer::Update(vector<double>& label){
+double OutputLayer::Update(ublas::vector<double>& label){
 	double total_error = 0.0;
 	old_weight = weight;
 	for(int i = 0; i < data_output.size(); i++){

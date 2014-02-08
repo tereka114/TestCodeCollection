@@ -8,9 +8,9 @@ using namespace cv;
 using namespace std;
 
 int main(){
-
 	Image img;
 	img.ImageRead("Lenna.jpg");
 	img.Color2Glay();
 	img.Hog();
+	img.FeatureExtract("BRISK");
 }

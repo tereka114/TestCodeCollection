@@ -7,6 +7,7 @@
 using namespace boost::numeric::ublas;
 using namespace std;
 
+
 void allscale(std::vector<ublas::vector<double> > &data){
 	double sum = 0.0;
 	int row = data.size(); int col = data[0].size();
@@ -70,9 +71,17 @@ void jointvector(std::vector<ublas::vector<double> > &data,std::vector<ublas::ve
 	}
 }
 
-void normalizevector(ublas::vector<double> &data){
-	double total = sum(data);
+template<typename T>
+void normalize_vector(ublas::vector<T> &data){
+	T total = sum(data);
 	for(int i = 0; i < data.size(); i++){
 		data[i] /= total;
+	}
+}
+
+template<typename T>
+void fill(ublas::vector<T> &data,int num){
+	for(int i = 0; i < data.size(); i++){
+		data[i] = num;
 	}
 }

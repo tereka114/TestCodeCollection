@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <math.h>
+#include <vector>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
@@ -11,7 +12,7 @@
 using namespace boost::numeric::ublas;
 
 //andのテストデータを生成する。
-void generete_xor(vector<vector<double> >& input_data,vector<vector<double> >& label_data){
+void generete_xor(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data){
 	input_data.resize(4);
 	label_data.resize(4);
 	for(int i = 0; i < input_data.size(); i++){
@@ -36,7 +37,7 @@ void generete_xor(vector<vector<double> >& input_data,vector<vector<double> >& l
 	label_data[3][0] = 0.0;
 }
 
-void generete_xor_many(vector<vector<double> >& input_data,vector<vector<double> >& label_data){
+void generete_xor_many(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data){
 	int size = 6;
 	input_data.resize(pow(2,size));
 	label_data.resize(pow(2,size));
@@ -73,7 +74,7 @@ void generete_xor_many(vector<vector<double> >& input_data,vector<vector<double>
 	}
 }
 
-void generete_and(vector<vector<double> >& input_data,vector<vector<double> >& label_data){
+void generete_and(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data){
 	input_data.resize(4);
 	label_data.resize(4);
 	for(int i = 0; i < input_data.size(); i++){
@@ -101,9 +102,9 @@ void generete_and(vector<vector<double> >& input_data,vector<vector<double> >& l
 int main(int argc, char const *argv[])
 {
 	NeuralNetwork nn;
-	nn.SetParameter(1,128,1000000);
-	vector<vector<double> > input_data;
-	vector<vector<double> > label_data;
+	nn.SetParameter(1,128,100000);
+	std::vector<ublas::vector<double> > input_data;
+	std::vector<ublas::vector<double> > label_data;
 	generete_xor_many(input_data,label_data);
 
 	nn.Training(input_data,label_data);

@@ -6,24 +6,25 @@
 #include <boost/numeric/ublas/io.hpp>
 #define NDEBUG
 
-using namespace boost::numeric::ublas;
+using namespace boost::numeric;
+using namespace std;
 
 class Layer{
 public:
-	matrix<double> weight;
-	vector<double> data_output;
-	matrix<double> old_weight;
-	matrix<double> error;
-	vector<double> input;
+	ublas::matrix<double> weight;
+	ublas::vector<double> data_output;
+	ublas::matrix<double> old_weight;
+	ublas::matrix<double> error;
+	ublas::vector<double> input;
 	int number; //数
 	int dimension; //次元数
 	double coefficient; //学習係数
 
 	double Sigmoid(double d);
 	void SetParameter(int layer_number,int layer_dimension);
-	void OutPut(vector<double>& input_data);
-	void InputPrepare(vector<double>& input_data);
-	void Update(matrix<double> &before_error,matrix<double> &before_old_weight,int layer_number,int before_dimension);
+	void OutPut(ublas::vector<double>& input_data);
+	void InputPrepare(ublas::vector<double>& input_data);
+	void Update(ublas::matrix<double> &before_error,ublas::matrix<double> &before_old_weight,int layer_number,int before_dimension);
 };
 
 double Layer::Sigmoid(double d){
@@ -44,8 +45,8 @@ void Layer::SetParameter(int layer_number,int layer_dimension){
 	coefficient = 0.01;
 }
 
-void Layer::InputPrepare(vector<double>& input_data){
-	vector<double> temp(input_data.size()+1);
+void Layer::InputPrepare(ublas::vector<double>& input_data){
+	ublas::vector<double> temp(input_data.size()+1);
 	temp[0] = 1.0;
 	for(int i = 0; i < input_data.size(); i++){
 		temp[i+1] = input_data[i];
@@ -54,7 +55,7 @@ void Layer::InputPrepare(vector<double>& input_data){
 	input_data = temp;
 }
 
-void Layer::OutPut(vector<double>& input_data){
+void Layer::OutPut(ublas::vector<double>& input_data){
 	input = input_data;
 	InputPrepare(input);
 	data_output = prod(weight,input);
@@ -64,7 +65,7 @@ void Layer::OutPut(vector<double>& input_data){
 	}
 }
 
-void Layer::Update(matrix<double> &before_error,matrix<double> &before_old_weight,int layer_number,int before_dimension){
+void Layer::Update(ublas::matrix<double> &before_error,ublas::matrix<double> &before_old_weight,int layer_number,int before_dimension){
 	old_weight = weight;
 
 	for(int i = 1; i < before_dimension; i++){

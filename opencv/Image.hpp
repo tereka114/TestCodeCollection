@@ -1,3 +1,4 @@
+#pragma once
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/nonfree/nonfree.hpp>
@@ -55,12 +56,12 @@ void Image::Color2Glay(){
 	cvtColor(image, glayimage,CV_RGB2GRAY);
 }
 
-vector<Mat> CalculateIntegralHOG(Mat& glayimage){
+std::vector<Mat> CalculateIntegralHOG(Mat& glayimage){
 	Mat xsobel,ysobel;
 	Sobel(glayimage,xsobel,CV_32F,1,0); //xの微分
 	Sobel(glayimage,ysobel,CV_32F,0,1); //yの微分
 
-	vector<Mat> bins(N_BIN);
+	std::vector<Mat> bins(N_BIN);
 	for(int i = 0; i < N_BIN; i++){
 		bins[i] = Mat::zeros(glayimage.size(),CV_32F);
 	}
@@ -79,7 +80,7 @@ vector<Mat> CalculateIntegralHOG(Mat& glayimage){
 		}
 	}
 
-	vector<Mat> integrals(N_BIN);
+	std::vector<Mat> integrals(N_BIN);
 	for(int i = 0; i < N_BIN; i++){
 		integral(bins[i],integrals[i]);
 	}
@@ -89,7 +90,7 @@ vector<Mat> CalculateIntegralHOG(Mat& glayimage){
 
 
 //セルごとのHog。セルはピクセルの塊
-void calculateHOGinCell(Mat& hog_cell,Rect roi,vector<Mat>& integrals){
+void calculateHOGinCell(Mat& hog_cell,Rect roi,std::vector<Mat>& integrals){
 	int x0 = roi.x,y0 = roi.y;
 	int x1 = x0 + roi.width,y1 = y0 + roi.height;
 
@@ -103,7 +104,7 @@ void calculateHOGinCell(Mat& hog_cell,Rect roi,vector<Mat>& integrals){
 	}
 }
 
-Mat getHog(Point pt,vector<Mat> &integrals){
+Mat getHog(Point pt,std::vector<Mat> &integrals){
 	if(pt.x - R < 0 ||
 		pt.y - R < 0 ||
 		pt.x + R >= integrals[0].cols ||
@@ -137,7 +138,7 @@ Mat getHog(Point pt,vector<Mat> &integrals){
 
 void Image::Hog(){
 	//積分画像の生成
-	vector<Mat> integrals = CalculateIntegralHOG(glayimage);
+	std::vector<Mat> integrals = CalculateIntegralHOG(glayimage);
 
 	Mat image = glayimage.clone();
 	image *= 0.5;
@@ -169,15 +170,15 @@ void Image::Hog(){
 		}
 	}
 	
-	imshow("out",image);
-	waitKey(0);
+	//imshow("out",image);
+	//waitKey(0);
 }
 
 void Image::FeatureExtract(string algorithm){
 	initModule_nonfree();
 
 	Ptr<FeatureDetector> detector = FeatureDetector::create(algorithm);
-	vector<KeyPoint> keypoint;
+	std::vector<KeyPoint> keypoint;
 	detector->detect(image,keypoint);
 
 	keypoints[algorithm] = keypoint;
@@ -185,8 +186,6 @@ void Image::FeatureExtract(string algorithm){
 	Ptr<DescriptorExtractor> extractor = DescriptorExtractor::create(algorithm);
 	Mat descriptor;
 	extractor->compute(image,keypoint,descriptor);
-
-
 	//cout << descriptor.cols << " "<< descriptor.rows << endl;
 	for(int i = 0; i < descriptor.rows; i++){
 		//Mat d(descriptor, Rect(0,i,descriptor.cols,1));
@@ -195,10 +194,10 @@ void Image::FeatureExtract(string algorithm){
 	feature_descriptors[algorithm] = descriptor;
 }
 
-void transformHistrogram(vector<MatND> &hist,MatND &return_hist){
-	vector<double> temp_histrogram;
+void transformHistrogram(std::vector<MatND> &hist,MatND &return_hist){
+	std::vector<double> temp_histrogram;
 	for(int i = 0; i < 3; i++){
-		vector<double> temp_color;
+		std::vector<double> temp_color;
 		hist[i].copyTo(temp_color);
 		for(int i = 0; i < temp_color.size(); i++){
 			temp_histrogram.push_back(temp_color[i]);
@@ -234,7 +233,7 @@ void Image::MakeColorHistrogram(){
 	TransFormAllHistrogram();
 }
 
-void Image::GetExtractFeature(string algorithm,vector<ublas::vector<double> > &result){
+void Image::GetExtractFeature(string algorithm,std::vector<ublas::vector<double> > &result){
 	Mat mat = feature_descriptors[algorithm];
 	mat2matrix(mat,result);
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <stdlib.h>
 #include <algorithm>
@@ -8,23 +9,23 @@
 #include "OutputLayer.hpp"
 #define NDEBUG
 
-using namespace boost::numeric::ublas;
+using namespace boost::numeric;
 
 class NeuralNetwork{
 public:
 	int training_time;
 	int middle_layer_num; //中間層の数
 	int middle_neuron_num;//中間層のニューロンの数
-	vector<vector<double> > input_data;
-	vector<vector<double> > label_data;
+	std::vector<ublas::vector<double> > input_data;
+	std::vector<ublas::vector<double> > label_data;
 	Layer middle_layer[300];
 	OutputLayer output_layer;
 
 	NeuralNetwork(){};
 	void SetParameter(int layer_num,int neuron_num,int training);
-	void Training(vector<vector<double> >& input_data,vector<vector<double> >& label_data);
-	void Test(vector<vector<double> >& input_data,vector<vector<double> >& label_data);
-	void MiddleOut(vector<vector<double> > &input);
+	void Training(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
+	void Test(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
+	void MiddleOut(std::vector<ublas::vector<double> > &input);
 };
 
 void NeuralNetwork::SetParameter(int layer_num,int neuron_num,int training){
@@ -33,7 +34,7 @@ void NeuralNetwork::SetParameter(int layer_num,int neuron_num,int training){
 	training_time = training;
 }
 
-void NeuralNetwork::Training(vector<vector<double> >& inputdata,vector<vector<double> >& labeldata){
+void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std::vector<ublas::vector<double> >& labeldata){
 	input_data = inputdata;
 	label_data = labeldata;
 	srand((unsigned)time(NULL)); 
@@ -43,8 +44,8 @@ void NeuralNetwork::Training(vector<vector<double> >& inputdata,vector<vector<do
 		middle_layer[i].SetParameter(middle_neuron_num,middle_neuron_num);
 	}
 
-	output_layer.SetParameter(1,middle_neuron_num);
-	vector<double> input_temp(input_data[0].size());
+	output_layer.SetParameter(labeldata[0].size(),middle_neuron_num);
+	ublas::vector<double> input_temp(input_data[0].size());
 	std::cout << "training 前" << std::endl;
 	std::cout << "training 開始" << std::endl;
 
@@ -61,6 +62,7 @@ void NeuralNetwork::Training(vector<vector<double> >& inputdata,vector<vector<do
 			}
 			//出力層
 			output_layer.OutPut(input_temp);
+			//std::cout << output_layer.data_output << std::endl;
 			//出力層の逆伝搬
 			err += output_layer.Update(label_data[i]);
 
@@ -86,8 +88,8 @@ void NeuralNetwork::Training(vector<vector<double> >& inputdata,vector<vector<do
 	}
 }
 
-void NeuralNetwork::Test(vector<vector<double> >& test_data,vector<vector<double> >& label_data){
-	vector<double> input_temp(test_data[0].size());
+void NeuralNetwork::Test(std::vector<ublas::vector<double> >& test_data,std::vector<ublas::vector<double> >& label_data){
+	ublas::vector<double> input_temp(test_data[0].size());
 	std::cout << "test start!" << std::endl;
 	bool flag = true;
 	int cnt = 0;
@@ -133,8 +135,8 @@ void NeuralNetwork::Test(vector<vector<double> >& test_data,vector<vector<double
 }
 
 //中間層の結果を出力する。(BackPropAutoEncoder用)
-void NeuralNetwork::MiddleOut(vector<vector<double> > &test_data){
-	vector<vector<double> > result;
+void NeuralNetwork::MiddleOut(std::vector<ublas::vector<double> > &test_data){
+	ublas::vector<ublas::vector<double> > result;
 
 	result.resize(test_data.size());
 	for(int i = 0; i < test_data.size(); i++){
@@ -142,7 +144,7 @@ void NeuralNetwork::MiddleOut(vector<vector<double> > &test_data){
 	}
 
 	for(int i = 0; i < test_data.size(); i++){
-		vector<double> input_temp(test_data[0].size());
+		ublas::vector<double> input_temp(test_data[0].size());
 		middle_layer[0].OutPut(test_data[i]);
 		input_temp = middle_layer[0].data_output;
 		result[i] = input_temp;

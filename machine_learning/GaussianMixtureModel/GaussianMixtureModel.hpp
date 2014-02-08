@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <math.h>
 #include <vector>
@@ -41,10 +42,11 @@ public:
 	void Training(std::vector<ublas::vector<double> > &input);
 	void Scale();
 	void OutPutParam();
-	void Test(std::vector<ublas::vector<double> > &test_data);
+	ublas::vector<int> Test(std::vector<ublas::vector<double> > &test_data);
 	void Setting();
 	void ReCalcParam();
 	double Gaussian(ublas::vector<double> &data,ublas::vector<double> &mean,ublas::matrix<double> &cov,matrix<double> &inv_cov,double det);
+	void Check(double x);
 	~GaussianMixtureModel(){};
 };
 
@@ -130,6 +132,9 @@ void GaussianMixtureModel::ReCalcParam(){
 	for(int i = 0; i < distribution_number;i++){
 		distribution[i].det = determinant(distribution[i].cov);
 		distribution[i].inv_cov = invert(distribution[i].cov);
+		// cout << distribution[i].det << endl;
+		// cout << distribution[i].inv_cov << endl;
+		//Check(distribution[i].det);
 	}
 }
 
@@ -157,6 +162,13 @@ void GaussianMixtureModel::OutPutParam(){
 		cout << distribution[i].cov << endl;
 	}
 }
+
+void GaussianMixtureModel::Check(double x){
+	if(isnan(x)){
+		cout << "NaNがでまっせー" << endl;
+		OutPutParam();
+	}
+}
 void GaussianMixtureModel::Training(std::vector<ublas::vector<double> > &input){
 	input_data = input;
 	N = input_data.size();
@@ -168,6 +180,7 @@ void GaussianMixtureModel::Training(std::vector<ublas::vector<double> > &input){
 
 	Setting();
 	Scale();
+	cout << input_data[0] << endl;
 	ReCalcParam();
 	double like = Likelihood();
 	ublas::vector<double> vect_temp(input_data[0].size()); //
@@ -225,22 +238,26 @@ void GaussianMixtureModel::Training(std::vector<ublas::vector<double> > &input){
 		ReCalcParam();
 		double new_like = Likelihood();
 		double diff = new_like - like;
-		if(cnt == 50){
+		if(cnt == 10){
 			break;
 		}
 		like = new_like;
 	}
 }
 
-void GaussianMixtureModel::Test(std::vector<ublas::vector<double> > &test_data){
+ublas::vector<int> GaussianMixtureModel::Test(std::vector<ublas::vector<double> > &test_data){
 	ublas::vector<double> vect_temp;
+	ublas::vector<int> result(test_data.size());
+	ReCalcParam();
 
 	for(int i = 0; i < test_data.size(); i++){
 		double max = 0.0;
 		int now_distribution = 0;
-		// for(int j = 0; j < distribution_number; j++){
-		// 	double per = pi[j] * Gaussian(test_data[i],distribution[j].mean,distribution[j].cov);
-		// 	if(per > max){max = per; now_distribution = j;}
-		// }
+		for(int j = 0; j < distribution_number; j++){
+			double per = pi[j] * Gaussian(test_data[i],distribution[j].mean,distribution[j].cov,distribution[j].inv_cov,distribution[j].det);
+			if(per > max){max = per; now_distribution = j;}
+		}
+		result[i] = now_distribution;
 	}
+	return result;
 }

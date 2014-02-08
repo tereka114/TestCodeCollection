@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -10,13 +11,13 @@ using namespace cv;
 using namespace boost::numeric;
 using namespace std;
 
-void mat2matrix(Mat& oldmat,vector<ublas::vector<double> > &result){
+void mat2matrix(Mat& oldmat,std::vector<ublas::vector<double> > &result){
 	Mat mat;
 	oldmat.convertTo( mat, CV_64F );
 
 	int row = mat.rows;
 	int col = mat.cols;
-	vector<double> v1;
+	std::vector<double> v1;
 	mat = mat.reshape(0,1);
 	mat.copyTo(v1);
 	ublas::vector<double> vect(col);
