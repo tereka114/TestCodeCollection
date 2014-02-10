@@ -15,17 +15,18 @@
 using namespace boost::numeric;
 using namespace std;
 
+template<class X>
 class GaussianDistribution{
 public:
-	ublas::vector<double> mean;
-	ublas::matrix<double> cov;
-	ublas::matrix<double> inv_cov;
-	double det;
+	ublas::vector<X> mean;
+	ublas::matrix<X> cov;
+	ublas::matrix<X> inv_cov;
+	X det;
 };
 
 class GaussianMixtureModel{
 public:
-	GaussianDistribution distribution[100]; //Another
+	GaussianDistribution<double> distribution[100]; //Another
 	std::vector<ublas::vector<double> > input_data;
 	int N; //データの数
 	
