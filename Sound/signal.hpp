@@ -307,7 +307,46 @@ ublas::vector<T> mfcc(ublas::vector<T> &signal_data,int fs,int numChannels,ublas
 
 	return result;
 }
+
+//ケプストラム平均正規化
+template<typename T>
+void cmn(std::vector<ublas::vector<double> > &mfcc){
+	int size = mfcc.size();
+	ublas::vector<double> average(size);
+	fill(average,0.0);
+
+	for(int i = 0; i < size; i++){
+		average += mfcc[i];
+	}
+	average = average * (1 / size);
+
+	for(int i = 0; i < size; i++){
+		mfcc[i] = mfcc[i] - average;
+	}
+}
+
 //delta parameter
-void delta(std::vetor<ublas::vector<double> > &mfcc){
-	
+void delta(std::vetor<ublas::vector<double> > &mfcc,int param){
+	int size = mfcc.size();
+	int dimensions = mfcc[0].size();
+
+	for(i = 0; i < size; i++){
+		double x_ave = 0.0;
+		ublas::vector<double> y_ave(dimensions);
+		fill(y_ave,0.0);
+		int cnt = 0;
+
+		//平均を算出する。
+		for(int j = i - param; j < i + param + 1; j++){
+			if(j < 0 || j >= size){
+				continue;
+			}else{
+				cnt++;
+				y_ave += mfcc[j];
+				x_ave += j;
+			}
+		}
+		x_ave /= cnt;
+		y_ave /= cnt;
+	}
 }

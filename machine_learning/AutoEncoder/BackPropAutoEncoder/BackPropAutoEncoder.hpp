@@ -5,6 +5,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
+#include "../../NeuralNetwork/NeuralNetwork.hpp"
 #define NDEBUG
 
 class BackPropAutoEncoder{
@@ -33,7 +34,11 @@ void BackPropAutoEncoder::Training(vector<vector<double> >& input_data){
 
 	for(int i = 0; i < reduce_time; i++){
 		neural_network[i].Training(input,input);
-		input = neural_network[i].MiddleOut(input);
+		vector<vector<double > temp = neural_network[i].MiddleOut(input);
+		for(int i = 0; i < temp.size(); i++){
+			input.resize(temp[0].size());
+		}
+		input = temp;
 	}
 }
 

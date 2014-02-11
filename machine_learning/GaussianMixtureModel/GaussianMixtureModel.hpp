@@ -82,7 +82,7 @@ void GaussianMixtureModel::Scale(){
 //多変量正規分布の式、高速化を目指してメモを中心に
 double GaussianMixtureModel::Gaussian(ublas::vector<double> &data,ublas::vector<double> &mean,ublas::matrix<double> &cov,matrix<double>& inv_cov,double det){
 	ublas::vector<double> minus_data_mean = data - mean;
-	double temp1 = 1.0 / (pow((2 * M_PI),(dimension / 2.0)));
+	double temp1 = 1.0 / (pow((2.0 * M_PI),(dimension / 2.0)));
 	double temp2 = 1.0 / pow(det,0.5);
 	double temp3 = - 0.5 * inner_prod(prod(minus_data_mean,inv_cov),minus_data_mean);
 	return temp1 * temp2 * exp(temp3);
@@ -121,12 +121,12 @@ void GaussianMixtureModel::Setting(){
 		ublas::matrix<double> mat(dimension,dimension);
 		for(int j = 0; j < mat.size1(); j++){
 			for(int k = 0; k < mat.size2(); k++){
-				mat(j,k) = (j == k) ? 1.0 : 0;
+				mat(j,k) = (j == k) ? 1.0 : 0.0;
 			}
 		}
 		distribution[i].cov = mat;
 	}
-	gaussian_temp1 = 1.0 / (pow((2 * M_PI),(dimension / 2.0)));
+	gaussian_temp1 = 1.0 / (pow((2.0 * M_PI),(dimension / 2.0)));
 }
 
 void GaussianMixtureModel::ReCalcParam(){
