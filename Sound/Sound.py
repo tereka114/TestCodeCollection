@@ -13,7 +13,7 @@ class Sound(object):
 	def __init__(self, filename):
 		#音のパラメータ
 		self.filename = filename
-		self.period = 30 #音を取り出す秒数
+		self.period = 15 #音を取り出す秒数
 		self.filedata,self.fs = self.readFile(filename) #波形データとサンプリング周波数
 		self.length = len(self.filedata) #音の長さ
 		self.start = 0
@@ -40,12 +40,14 @@ class Sound(object):
 		os.system("sox -t raw -c 1 -r 16000 -b 16 -e signed-integer '%s' -t wav '%s'" %(filename,filename.replace(".wav","_temp.wav")))
 		filename = filename.replace(".wav","_temp.wav")
 
+		#データを調べる。
 		wf = wave.open(filename,"rb")
 		fs = wf.getframerate()
 		channnel= wf.getnchannels()
 		x = wf.readframes(wf.getnframes())
-		x = scipy.fromstring(x,dtype="int16")
+		x = np.frombuffer(x,dtype="int16")
 		wf.close()
+		print len(x) / fs
 
 		start = len(x) / 2 - fs * self.period
 		end = len(x) / 2 + fs * self.period
@@ -53,15 +55,25 @@ class Sound(object):
 		if start < 0: start = 0
 		if end > len(x)-1: end = len(x)-1
 
-		write_wave = wave.Wave_write(filename.replace("_temp.wav","_write.wav"))
-		write_wave.setparams(wf.getparams())
-		write_wave.writeframes(x[start:end])
+		print start/16000,end /16000
+		print len(x[start:end])
+		print wf.getparams()
+		os.system("sox %s %s trim %s %s" % (filename,filename.replace("_temp.wav","_write.wav"),start/fs,(end-start)/fs)) 
+
+		#切り取ったデータファイルを調査
+		wf = wave.open(filename.replace("_temp.wav","_write.wav"),"rb")
+		fs = wf.getframerate()
+		channnel= wf.getnchannels()
+		x = wf.readframes(wf.getnframes())
+		x = np.frombuffer(x,dtype="int16")
+		wf.close()
+
 		self.filename = filename.replace("_temp.wav","_write.wav")
 
 		self.start = start
 		self.end = end
 
-		return x[start:end],float(fs)
+		return x,float(fs)
 
 	def resampleMp3(self,file):
 		os.system("lame --decode '%s' '%s'" % (file,file.replace(".mp3",".wav")))
@@ -162,7 +174,10 @@ class Sound(object):
 
 		os.system("HCopy -T 1 -C config.hcopy -S codstr.scp")
 		os.system("HList -o -h '%s' > '%s'" % (mfccfile,tempfile))
+		os.remove(mfccfile)
 		self.formatExchange(tempfile,textfile)
+		os.remove(self.filename)
+		os.remove(tempfile)
 		self.mfcc = self.htkFileLoad(textfile)
 
 	# def emd(self):

@@ -4,7 +4,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 
-using namespace boost::numeric::ublas;
+using namespace boost::numeric;
 using namespace std;
 
 
@@ -84,4 +84,48 @@ void fill(ublas::vector<T> &data,int num){
 	for(int i = 0; i < data.size(); i++){
 		data[i] = num;
 	}
+}
+
+template<typename T>
+void fill(ublas::matrix<T> &data,int num){
+	for(int i = 0; i < data.size1(); i++){
+		for(int j = 0; j < data.size2(); j++){
+			data(i,j) = num;
+		}
+	}
+}
+template<typename T>
+ublas::vector<T> arange(T start,T end){
+	int size = end - start;
+	ublas::vector<T> result(size);
+
+	for(int i = 0; i < size; i++){
+		result[i] = i + start;
+	}
+
+	return result;
+}
+
+template<typename T>
+ublas::vector<T> arange(T start,T end,T space){
+	int size = (end - start) / space;
+	ublas::vector<T> result(size);
+
+	for(int i = 0; i < size; i++){
+		result[i] = i * space + start;
+	}
+
+	return result;
+}
+
+template<typename T>
+ublas::vector<T> cut(ublas::vector<T> &data,int start,int end){
+	int size = end - start;
+	ublas::vector<double> result(size);
+
+	for(int i = 0; i < size; i++){
+		result[i] = data[start + i];
+	}
+
+	return result;
 }
