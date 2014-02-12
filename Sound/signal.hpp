@@ -310,9 +310,9 @@ ublas::vector<T> mfcc(ublas::vector<T> &signal_data,int fs,int numChannels,ublas
 
 //ケプストラム平均正規化
 template<typename T>
-void cmn(std::vector<ublas::vector<double> > &mfcc){
+void cmn(std::vector<ublas::vector<T> > &mfcc){
 	int size = mfcc.size();
-	ublas::vector<double> average(size);
+	ublas::vector<T> average(size);
 	fill(average,0.0);
 
 	for(int i = 0; i < size; i++){
@@ -326,11 +326,11 @@ void cmn(std::vector<ublas::vector<double> > &mfcc){
 }
 
 //delta parameter
-void delta(std::vetor<ublas::vector<double> > &mfcc,int param){
+void delta(std::vector<ublas::vector<double> > &mfcc,int param){
 	int size = mfcc.size();
 	int dimensions = mfcc[0].size();
 
-	for(i = 0; i < size; i++){
+	for(int i = 0; i < size; i++){
 		double x_ave = 0.0;
 		ublas::vector<double> y_ave(dimensions);
 		fill(y_ave,0.0);

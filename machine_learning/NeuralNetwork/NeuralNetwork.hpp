@@ -26,7 +26,7 @@ public:
 	void Training(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
 	void Check(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
 	ublas::vector<double> Predict(ublas::vector<double> &test_data);
-	void MiddleOut(std::vector<ublas::vector<double> >& input);
+	std::vector<ublas::vector<double> > MiddleOut(std::vector<ublas::vector<double> >& input);
 };
 
 void NeuralNetwork::SetParameter(int layer_num,int neuron_num,int training){
@@ -152,8 +152,8 @@ void NeuralNetwork::Check(std::vector<ublas::vector<double> >& test_data,std::ve
 }
 
 //中間層の結果を出力する。(BackPropAutoEncoder用)
-void NeuralNetwork::MiddleOut(std::vector<ublas::vector<double> > &test_data){
-	ublas::vector<ublas::vector<double> > result;
+std::vector<ublas::vector<double> > NeuralNetwork::MiddleOut(std::vector<ublas::vector<double> > &test_data){
+	std::vector<ublas::vector<double> > result;
 
 	result.resize(test_data.size());
 	for(int i = 0; i < test_data.size(); i++){
@@ -166,4 +166,5 @@ void NeuralNetwork::MiddleOut(std::vector<ublas::vector<double> > &test_data){
 		input_temp = middle_layer[0].data_output;
 		result[i] = input_temp;
 	}
+	return result;
 }
