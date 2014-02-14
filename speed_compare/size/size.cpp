@@ -5,30 +5,31 @@ using namespace std;
 
 int N = 1000000;
 
-void argument(vector<int> array){
-	int a = 10;
-}
-void pointer_argument(vector<int> &array){
-	int b = 10;
-}
-
 int main(void){
 	int size = 100000;
-	vector<int> array(size);
+	vector<int> array1(size);
+	vector<int> array2(size);
 	for(int i = 0; i < size; i++){
-		array[i] = i;
+		array1[i] = i;
 	}
 	clock_t start,end;
+
+	//size関数を使う
 	start = clock();
 	for(int i = 0; i < N; i++){
-		argument(array);
+		for(int j = 0; j < array1.size(); j++){
+			int a = array1[j] + array2[j];
+		}
 	}
 	end = clock();
 	cout << (double)(end-start)/CLOCKS_PER_SEC << endl;
 
 	start = clock();
+	//sizeはあらかじめ指定
 	for(int i = 0; i < N; i++){
-		pointer_argument(array);
+		for(int j = 0; j < size; j++){
+			int a = array1[j] + array2[j];
+		}
 	}
 	end = clock();
 	cout << (double)(end-start)/CLOCKS_PER_SEC << endl;
