@@ -22,17 +22,20 @@ using namespace cv;
 using namespace std;
 using namespace boost::numeric;
 
-
 //Hogについてはhttp://gori-naru.blogspot.jp/2012/11/hog.html　を参考に。
 class Image{
 public:
 	Mat image; //普通の画像
 	Mat glayimage; //グレースケール画像
-	vector<MatND> colorhistrogram; //カラーヒストグラム
+	Mat resizeimage;
+	string filename;
+
+	std::vector<MatND> colorhistrogram; //カラーヒストグラム
 	MatND same_color_histrogram; //同じカラーヒストグラム（三食合体）
 	map<string,vector<KeyPoint> > keypoints; //キーポイント
 	map<string,Mat > feature_descriptors; //特徴量（SIFTなど）
-	vector<Mat> hog; //hog特徴量
+	std::vector<Mat> hog; //hog特徴量
+	map<string,std::vector<ublas::vector<double> > > ublas_feature_descriptors;
 
 	void ImageRead(string path);
 	void MatRead(Mat &mat);
@@ -41,11 +44,13 @@ public:
 	void MakeColorHistrogram();
 	void Color2Glay();
 	void Hog();
+	void Resize(int x,int y);
 	void GetExtractFeature(string algorithm,vector<ublas::vector<double> > &result);
 };
 
 void Image::ImageRead(string path){
 	image = imread(path);
+	filename = path;
 }
 
 void Image::MatRead(Mat &mat){
@@ -231,6 +236,14 @@ void Image::MakeColorHistrogram(){
 	}
 
 	TransFormAllHistrogram();
+}
+
+void Image::Resize(int x,int y){
+	Size dst_size(x, y);
+	resize(image,resizeimage,dst_size,0,0,INTER_CUBIC);
+	namedWindow("red image", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+	imshow("red image", resizeimage);
+	waitKey(0);
 }
 
 void Image::GetExtractFeature(string algorithm,std::vector<ublas::vector<double> > &result){

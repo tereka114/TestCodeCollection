@@ -7,6 +7,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
@@ -30,16 +31,17 @@ public:
 
 	string wavefile;
 	string mfccfile;
+
 	Sound(){}
 	//SoundRead();
-	void FileReadMFCC(string path);
+	void FileReadMFCC();
 	void FileReadWave(string path);
 	void SetParameterStft(int num1,int num2);
 	void FeatureExtract();
 };
 
-void Sound::FileReadMFCC(string path){
-	std::ifstream ifs(path);
+void Sound::FileReadMFCC(){
+	std::ifstream ifs(mfccfile);
 	string str;
 	ublas::vector<double> vect(36);
 
@@ -59,6 +61,8 @@ void Sound::FileReadMFCC(string path){
 }
 
 void Sound::FileReadWave(string path){
+	wavefile = path;
+	mfccfile = boost::algorithm::replace_all_copy(path,".wav",".txt");
 	SndfileHandle infile(path, SFM_READ);
 	fs = infile.samplerate();
 	channel = infile.channels();

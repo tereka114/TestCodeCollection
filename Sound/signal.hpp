@@ -9,6 +9,8 @@
 using namespace std;
 using namespace boost::numeric;
 
+#define NDEBUG
+
 template<typename T>
 ublas::vector<T> hamming(ublas::vector<T> &signal_data){
 	int size = signal_data.size();

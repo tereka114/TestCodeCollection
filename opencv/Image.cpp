@@ -13,4 +13,5 @@ int main(){
 	img.Color2Glay();
 	img.Hog();
 	img.FeatureExtract("BRISK");
+	img.Resize(320,240);
 }
