@@ -21,12 +21,16 @@ public:
 	std::vector<ublas::vector<double> > input_data;
 	std::vector<ublas::vector<double> > centroid;
 	std::vector<double> attribute;
+
+	ublas::vector<double> mean;
+	ublas::vector<double> std;
 	int cluster;
 	int dimension;
 	int N;
 	void SetParameter(int cluster_num);
 	void Setting();
 	void Scale();
+	std::vector<ublas::vector<double> > TestScale(std::vector<ublas::vector<double> > &test_data);
 	void PrintOutParameter();
 	void Training(std::vector<ublas::vector<double> > &input);
 	ublas::vector<int> Test(std::vector<ublas::vector<double> > &test);
@@ -41,13 +45,13 @@ void Kmeans::Setting(){
 	for(int i = 0; i < cluster; i++){
 		ublas::vector<double> vect_temp(dimension);
 		for(int j = 0; j < dimension; j++){
-			vect_temp[j] = (double)rand()/RAND_MAX;
+			vect_temp[j] = ((double)rand()/RAND_MAX) - 0.5;
 		}
 		centroid.push_back(vect_temp);
 	}
 }
 void Kmeans::Scale(){
-	ublas::vector<double> mean(N);
+	mean.resize(N);
 
 	for(int i = 0; i < dimension; i++){
 		double sum = 0.0;
@@ -58,7 +62,7 @@ void Kmeans::Scale(){
 		mean[i] = sum / N;
 	}
 
-	ublas::vector<double> std(dimension);
+	std.resize(dimension);
 
 	for(int i = 0; i < dimension; i++){
 		double sum = 0.0;
@@ -73,6 +77,15 @@ void Kmeans::Scale(){
 			input_data[j][i] = (input_data[j][i] - mean[i]) / std[i];
 		}
 	}
+}
+
+std::vector<ublas::vector<double> > Kmeans::TestScale(std::vector<ublas::vector<double> > &test_data){
+	for(int i = 0; i < test_data[0].size(); i++){
+		for(int j = 0; j < test_data.size(); j++){
+			test_data[j][i] = (test_data[j][i] - mean[i]) / std[i];
+		}
+	}
+	return test_data;
 }
 
 void Kmeans::PrintOutParameter(){
@@ -91,12 +104,12 @@ void Kmeans::Training(std::vector<ublas::vector<double> > &input){
 	//PrintOutParameter();
 
 	double like; //指標
-	double before_like = 10000000; //新しい指標（更新先）
+	double before_like = DBL_MAX; //新しい指標（更新先）
 	int turn = 0;
 	while(1){
 		//E-step
 		ublas::vector<double> min_distance(N);
-		fill( min_distance.begin(), min_distance.end(), 100000000 );
+		fill( min_distance.begin(), min_distance.end(),DBL_MAX );
 
 		for(int i = 0; i < cluster; i++){
 			for(int j = 0; j < N; j++){
@@ -149,13 +162,16 @@ void Kmeans::Training(std::vector<ublas::vector<double> > &input){
 }
 
 ublas::vector<int> Kmeans::Test(std::vector<ublas::vector<double> > &test){
+	//cout << test[0] << endl;
 	ublas::vector<int> result(test.size());
+	std::vector<ublas::vector<double> > test_data = TestScale(test);
+	//cout << test_data[0] << endl;
 
 	for(int i = 0; i < test.size(); i++){
-		double min_distance = 10000000;
+		double min_distance = DBL_MAX;
 		int now_attribute = 0;
 		for(int j = 0; j < cluster; j++){
-			double temp_distance = euclidean_distance(test[i],centroid[j]);
+			double temp_distance = euclidean_distance(test_data[i],centroid[j]);
 			//cout << temp_distance << endl;
 			if(temp_distance < min_distance){
 				min_distance = temp_distance;

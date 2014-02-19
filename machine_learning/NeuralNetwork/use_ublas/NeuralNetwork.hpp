@@ -83,9 +83,6 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 				layer_number_temp = middle_layer[j].number;
 			}
 		}
-		if(error < 0.01){
-			break;
-		}
 		if((n % 50000) == 0){
 			std::cout << n << std::endl;
 			Check(inputdata,labeldata);
