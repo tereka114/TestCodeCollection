@@ -246,7 +246,7 @@ void GaussianMixtureModel::Training(std::vector<ublas::vector<double> > &input){
 	}
 }
 
-ublas::vector<int> GaussianMixtureModel::Test(std::vector<ublas::vector<double> > &test_data){
+ublas::vector<int> GaussianMixtureModel::Predict(std::vector<ublas::vector<double> > &test_data){
 	ublas::vector<double> vect_temp;
 	ublas::vector<int> result(test_data.size());
 	ReCalcParam();

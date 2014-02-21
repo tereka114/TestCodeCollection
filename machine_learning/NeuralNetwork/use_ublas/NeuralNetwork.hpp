@@ -90,6 +90,7 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 	}
 }
 
+//出力を返す。
 ublas::vector<double> NeuralNetwork::Predict(ublas::vector<double> &test_data){
 	ublas::vector<double> input_temp(test_data.size());
 
@@ -106,6 +107,7 @@ ublas::vector<double> NeuralNetwork::Predict(ublas::vector<double> &test_data){
 	return input_temp;
 }
 
+//XORチェック、および出力確認用
 void NeuralNetwork::Check(std::vector<ublas::vector<double> >& test_data,std::vector<ublas::vector<double> >& label_data){
 	ublas::vector<double> input_temp(test_data[0].size());
 	std::cout << "test start!" << std::endl;

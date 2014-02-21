@@ -161,7 +161,7 @@ void Kmeans::Training(std::vector<ublas::vector<double> > &input){
 	}
 }
 
-ublas::vector<int> Kmeans::Test(std::vector<ublas::vector<double> > &test){
+ublas::vector<int> Kmeans::Predict(std::vector<ublas::vector<double> > &test){
 	//cout << test[0] << endl;
 	ublas::vector<int> result(test.size());
 	std::vector<ublas::vector<double> > test_data = TestScale(test);

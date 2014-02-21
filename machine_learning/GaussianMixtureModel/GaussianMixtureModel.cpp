@@ -38,5 +38,5 @@ int main(void){
 	gmm.SetParameter(2);
 	std::vector<ublas::vector<double> > input;
 	fileread(input);
-	gmm.Training(input);
+	gmm.Predict(input);
 }

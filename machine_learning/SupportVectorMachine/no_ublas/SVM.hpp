@@ -6,18 +6,24 @@ using namespace std;
 //参考：http://msirocoder.blog35.fc2.com/blog-entry-35.html
 //更新方法はSMOを利用
 class SVM{
+private:
+	int CheckUpdate(int number);
+	int Update(int number);
+	int SMO(int number1,int number2);
+	double Function(int number);
+	double Karnel(const vector<double> vect1,const vector<double> vect2);
 public:
 	vector<vector<double> > input_data;
 	vector<double> label_data;
-	vector<double> weight;
+	vector<double> weight;//重み
 	vector<double> a; //変数a
 	vector<double> err_cache;
 	vector<int> sv_index;
 
 	int input_size;
-	int training_time;
-	double eps;
-	double delta;
+	int training_time;//学習回数
+	double eps; //猶予
+	double delta;//delta
 	double svm_c;
 	double b;
 	double tolerance;
@@ -30,15 +36,10 @@ public:
 
 	void SetParameter(double param_svm_c,int function,double p,double param_karnel_c,int training);
 	void Training(vector<vector<double> > &input,vector<double> &label);
-	int CheckUpdate(int number);
-	int Update(int number);
-	int SMO(int number1,int number2);
 	double Test(vector<double> test);
-	double Function(int number);
-	double Karnel(const vector<double> vect1,const vector<double> vect2);
 };
 
-void SVM::SetParameter(double param_svm_c,int function,double p,double param_karnel_c,int training){
+void SVM::SetParameter(double param_svm_c = 1000.0,int function = 0,double p = 4,double param_karnel_c = 1.0,int training = 1000000){
 	svm_c = param_svm_c;
 	karnel_function = function;
 	karnel_p = p;
