@@ -20,12 +20,13 @@ double OutputLayer::Update(ublas::vector<double>& label){
 	old_weight = weight;
 	
 	for(int i = 0; i < data_output.size(); i++){
-		double p = (label[i] - data_output[i]) * (1.0 - data_output[i]) * data_output[i];
+		error[i] = (label[i] - data_output[i]) * (1.0 - data_output[i]) * data_output[i];
 		total_error += pow(label[i] - data_output[i],2);
+
 		for(int j = 0; j < input.size();j++){
-			error(i,j) = p * input[j];
-			weight(i,j) +=  coefficient * error(i,j);
+			weight(i,j) +=  coefficient * error[i] * input[j];
 		}
+		bias[i] += coefficient * error[i];
 	}
 	return total_error;
 }

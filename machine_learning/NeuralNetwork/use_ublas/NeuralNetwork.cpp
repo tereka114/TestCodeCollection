@@ -102,10 +102,10 @@ void generete_and(std::vector<ublas::vector<double> >& input_data,std::vector<ub
 int main(int argc, char const *argv[])
 {
 	NeuralNetwork nn;
-	nn.SetParameter(1,3,1000000);
+	nn.SetParameter(1,100,300000);
 	std::vector<ublas::vector<double> > input_data;
 	std::vector<ublas::vector<double> > label_data;
-	generete_xor(input_data,label_data);
+	generete_xor_many(input_data,label_data);
 
 	nn.Training(input_data,label_data);
 	nn.Check(input_data,label_data);

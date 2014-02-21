@@ -33,7 +33,7 @@ public:
 	std::vector<ublas::vector<double> > TestScale(std::vector<ublas::vector<double> > &test_data);
 	void PrintOutParameter();
 	void Training(std::vector<ublas::vector<double> > &input);
-	ublas::vector<int> Test(std::vector<ublas::vector<double> > &test);
+	ublas::vector<int> Predict(std::vector<ublas::vector<double> > &test);
 };
 
 void Kmeans::SetParameter(int cluster_num){
@@ -93,7 +93,9 @@ void Kmeans::PrintOutParameter(){
 		cout << centroid[i] << endl;
 	}
 }
+
 void Kmeans::Training(std::vector<ublas::vector<double> > &input){
+	cout << input.size() << endl;
 	input_data = input;
 	dimension = input[0].size();
 	N = input_data.size();

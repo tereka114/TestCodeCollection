@@ -43,7 +43,7 @@ public:
 	void Training(std::vector<ublas::vector<double> > &input);
 	void Scale();
 	void OutPutParam();
-	ublas::vector<int> Test(std::vector<ublas::vector<double> > &test_data);
+	ublas::vector<int> Predict(std::vector<ublas::vector<double> > &test_data);
 	void Setting();
 	void ReCalcParam();
 	double Gaussian(ublas::vector<double> &data,ublas::vector<double> &mean,ublas::matrix<double> &cov,matrix<double> &inv_cov,double det);

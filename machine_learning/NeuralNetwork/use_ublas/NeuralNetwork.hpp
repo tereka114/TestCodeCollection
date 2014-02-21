@@ -23,6 +23,7 @@ public:
 
 	NeuralNetwork(){};
 	void SetParameter(int layer_num,int neuron_num,int training);
+	void FeedForward(ublas::vector<double> &one_of_input_data);
 	void Training(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
 	void Check(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
 	ublas::vector<double> Predict(ublas::vector<double> &test_data);
@@ -33,6 +34,19 @@ void NeuralNetwork::SetParameter(int layer_num,int neuron_num,int training){
 	middle_layer_num = layer_num;
 	middle_neuron_num = neuron_num;
 	training_time = training;
+}
+
+//前半の部分。
+void NeuralNetwork::FeedForward(ublas::vector<double> &one_of_input_data){
+	ublas::vector<double> input_temp(input_data[0].size());
+	middle_layer[0].OutPut(one_of_input_data);
+	input_temp = middle_layer[0].data_output;
+
+	for(int i = 1; i < middle_layer_num; i++){
+		middle_layer[i].OutPut(input_temp);
+		input_temp = middle_layer[i].data_output;
+	}
+	output_layer.OutPut(input_temp);
 }
 
 void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std::vector<ublas::vector<double> >& labeldata){
@@ -46,7 +60,6 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 	}
 
 	output_layer.SetParameter(labeldata[0].size(),middle_neuron_num);
-	ublas::vector<double> input_temp(input_data[0].size());
 	std::cout << "training 前" << std::endl;
 	std::cout << "training 開始" << std::endl;
 
@@ -54,21 +67,13 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 	for(int n = 0; n < training_time; n++){
 		double error = 0.0;
 		for(int i = 0; i < input_data.size();i++){
-			//学習
-			middle_layer[0].OutPut(input_data[i]);
-			input_temp = middle_layer[0].data_output;
-			//各層の学習
-			for(int j = 1; j < middle_layer_num; j++){
-				middle_layer[j].OutPut(input_temp);
-				input_temp = middle_layer[j].data_output;
-			}
-			//出力層
-			output_layer.OutPut(input_temp);
+			//前半
+			FeedForward(input_data[i]);
 			//std::cout << output_layer.data_output << std::endl;
 			//出力層の逆伝搬
 			error += output_layer.Update(label_data[i]);
 
-			matrix<double> error_temp = output_layer.error;
+			ublas::vector<double> error_temp = output_layer.error;
 			matrix<double> old_weight_temp = output_layer.old_weight;
 			int dimension_temp = output_layer.dimension;
 			int layer_number_temp = output_layer.number;
@@ -92,17 +97,7 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 
 //出力を返す。
 ublas::vector<double> NeuralNetwork::Predict(ublas::vector<double> &test_data){
-	ublas::vector<double> input_temp(test_data.size());
-
-	middle_layer[0].OutPut(test_data);
-	input_temp = middle_layer[0].data_output;
-	//各層の学習
-	for(int j = 1; j < middle_layer_num; j++){
-		middle_layer[j].OutPut(input_temp);
-		input_temp = middle_layer[j].data_output;
-	}
-	//出力層
-	output_layer.OutPut(input_temp);
+	FeedForward(test_data);
 	input_temp = output_layer.data_output;
 	return input_temp;
 }
@@ -114,16 +109,7 @@ void NeuralNetwork::Check(std::vector<ublas::vector<double> >& test_data,std::ve
 	bool flag = true;
 	int cnt = 0;
 	for(int i = 0; i < test_data.size();i++){
-		//学習
-		middle_layer[0].OutPut(test_data[i]);
-		input_temp = middle_layer[0].data_output;
-		//各層の学習
-		for(int j = 1; j < middle_layer_num; j++){
-			middle_layer[j].OutPut(input_temp);
-			input_temp = middle_layer[j].data_output;
-		}
-		//出力層
-		output_layer.OutPut(input_temp);
+		FeedForward(test_data[i]);
 		input_temp = output_layer.data_output;
 
 		std::cout << i << "番目のデータ"<< std::endl;

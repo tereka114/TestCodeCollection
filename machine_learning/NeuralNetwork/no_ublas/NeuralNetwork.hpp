@@ -7,7 +7,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
-#include "OutPutLayer1.hpp"
+#include "OutPutLayer.hpp"
 
 using namespace boost::numeric;
 using namespace std;
@@ -61,7 +61,6 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 
 			error += output_layer.total_error;
 		}
-		cout << error << endl;
 	}
 }
 

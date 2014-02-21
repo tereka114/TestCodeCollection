@@ -5,7 +5,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
-#include "Layer1.hpp"
+#include "Layer.hpp"
 
 using namespace boost::numeric;
 
@@ -20,10 +20,14 @@ void OutPutLayer::Update(ublas::vector<double> &label){
 	// cout << weight << endl;
 	// cout << data_output << endl;
 	// cout << label << endl;
+
 	old_weight = weight;
+	
 	for(int i = 0; i < number; i++){
 		error[i] = (label[i] - data_output[i]) * data_output[i] * (1.0 - data_output[i]);
+		bias[i] += error[i] * coefficient;
 	}
+
 	for(int i = 0; i < number; i++){
 		for(int j = 0; j < input_data.size(); j++){
 			weight(i,j) += coefficient * error[i] * input_data[j];
