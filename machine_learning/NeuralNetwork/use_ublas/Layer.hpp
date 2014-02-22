@@ -18,6 +18,7 @@ public:
 	ublas::vector<double> error; //エラー値
 	ublas::vector<double> input; //入力
 	ublas::vector<double> bias;
+
 	int number; //数
 	int dimension; //次元数
 	double coefficient; //学習係数
@@ -42,6 +43,7 @@ void Layer::SetParameter(int layer_number,int layer_dimension){
 	error.resize(layer_number);
 	bias.resize(layer_number);
 
+	//bias
 	for(int i = 0; i < layer_number; i++){
 		bias[i] = (double)rand()/RAND_MAX - 0.5;
 	}
@@ -54,6 +56,7 @@ void Layer::SetParameter(int layer_number,int layer_dimension){
 	}
 }
 
+//出力
 void Layer::OutPut(ublas::vector<double>& input_data){
 	input = input_data;
 	data_output = prod(weight,input);
@@ -72,12 +75,14 @@ void Layer::Update(ublas::vector<double> &before_error,ublas::matrix<double> &be
 		for(int j = 0; j < layer_number; j++){
 			ek += before_error[j] * before_old_weight(j,i);
 		}
-		ek = ek * data_output[i] * (1.0 - data_output[i]);
+		error[i] = ek;
+	}
+	for(int i = 0; i < layer_number; i++){
+		double ek = error[i] * data_output[i] * (1.0 - data_output[i]);
 		bias[i] += ek * coefficient;
 
-		for(int j = 0; j < input.size(); j++){
+		for(int j = 0; j < dimension; j++){
 			weight(i,j) += coefficient * input[j] * ek;
 		}
-		error[i] = ek;
 	}
 }
