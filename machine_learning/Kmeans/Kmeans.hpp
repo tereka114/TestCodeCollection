@@ -102,7 +102,7 @@ void Kmeans::Training(std::vector<ublas::vector<double> > &input){
 	attribute.resize(N);
 
 	Setting();
-	Scale();
+	//Scale();
 	//PrintOutParameter();
 
 	double like; //指標

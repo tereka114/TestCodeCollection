@@ -61,6 +61,7 @@ void Layer::OutPut(ublas::vector<double>& input_data){
 	input = input_data;
 	data_output = prod(weight,input);
 
+	//biasの修正
 	for(int i = 0; i < data_output.size(); i++){
 		data_output[i] += bias[i];
 		data_output[i] = Sigmoid(data_output[i]);
@@ -77,6 +78,7 @@ void Layer::Update(ublas::vector<double> &before_error,ublas::matrix<double> &be
 		}
 		error[i] = ek;
 	}
+	
 	for(int i = 0; i < layer_number; i++){
 		double ek = error[i] * data_output[i] * (1.0 - data_output[i]);
 		bias[i] += ek * coefficient;
