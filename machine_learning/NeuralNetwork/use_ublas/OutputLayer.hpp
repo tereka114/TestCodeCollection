@@ -14,10 +14,10 @@ using namespace boost::numeric::ublas;
 
 class OutputLayer:public Layer{
 public:
-	double Update(ublas::vector<double>& label);
+	double Update(const ublas::vector<double>& label);
 };
 
-double OutputLayer::Update(ublas::vector<double>& label){
+double OutputLayer::Update(const ublas::vector<double>& label){
 	double total_error = 0.0;
 	old_weight = weight;
 	
@@ -28,9 +28,6 @@ double OutputLayer::Update(ublas::vector<double>& label){
 		total_error += 0.5 * pow(label[i] - data_output[i],2);
 
 		row(weight,i) += input * (error[i] * coefficient);
-		// for(int j = 0; j < input.size();j++){
-		// 	weight(i,j) +=  coefficient * error[i] * input[j]; //学習係数、エラー、入力
-		// }
 		bias[i] += coefficient * error[i];
 	}
 	return total_error;

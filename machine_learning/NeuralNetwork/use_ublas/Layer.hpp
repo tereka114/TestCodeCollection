@@ -24,7 +24,7 @@ public:
 	double coefficient; //学習係数
 
 	void SetParameter(int n_neuron,int n_input);
-	void OutPut(ublas::vector<double>& input_data);
+	void OutPut(const ublas::vector<double>& input_data);
 	void Update(ublas::vector<double> &before_error,ublas::matrix<double> &before_old_weight);
 private:
 	double Sigmoid(double d);
@@ -56,7 +56,7 @@ void Layer::SetParameter(int n_neuron,int n_input){
 }
 
 //出力
-void Layer::OutPut(ublas::vector<double>& input_data){
+void Layer::OutPut(const ublas::vector<double>& input_data){
 	input = input_data;
 	//しぐもいど関数の入力と出力を分割する。
 	data_output = prod(weight,input);
@@ -70,12 +70,6 @@ void Layer::OutPut(ublas::vector<double>& input_data){
 
 void Layer::Update(ublas::vector<double> &before_error,ublas::matrix<double> &before_old_weight){
 	old_weight = weight;
-	// cerr << __func__ << endl; 
-	// cerr << before_error << endl;
-	// cerr << before_old_weight << endl;
-	// cerr << number << endl;
-	// cerr << before_dimension << endl;
-	// cerr << dimension << endl;
 
 	for(int i = 0; i < error.size(); i++){
 		double ek = 0.0;
