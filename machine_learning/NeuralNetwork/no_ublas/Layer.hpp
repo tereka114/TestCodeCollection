@@ -47,7 +47,7 @@ void Layer::SetParameter(int layer_number,int layer_dimension){
 	}
 	number = layer_number;
 	dimension = layer_dimension;
-	coefficient = 0.8;
+	coefficient = 0.01;
 }
 
 void Layer::OutPut(ublas::vector<double> &inputdata){

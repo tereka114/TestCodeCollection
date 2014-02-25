@@ -5,6 +5,8 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
+#include <boost/numeric/ublas/vector_proxy.hpp>
+#include <boost/numeric/ublas/matrix_proxy.hpp>
 #include "Layer.hpp"
 #define NDEBUG
 
@@ -19,13 +21,16 @@ double OutputLayer::Update(ublas::vector<double>& label){
 	double total_error = 0.0;
 	old_weight = weight;
 	
-	for(int i = 0; i < data_output.size(); i++){
+	//label[i] - data_output[i] を変数
+	//sigmoidと微分を組に、delta_weightかえる。
+	for(int i = 0; i < weight.size1(); i++){
 		error[i] = (label[i] - data_output[i]) * (1.0 - data_output[i]) * data_output[i];
-		total_error += pow(label[i] - data_output[i],2);
+		total_error += 0.5 * pow(label[i] - data_output[i],2);
 
-		for(int j = 0; j < input.size();j++){
-			weight(i,j) +=  coefficient * error[i] * input[j];
-		}
+		row(weight,i) += input * (error[i] * coefficient);
+		// for(int j = 0; j < input.size();j++){
+		// 	weight(i,j) +=  coefficient * error[i] * input[j]; //学習係数、エラー、入力
+		// }
 		bias[i] += coefficient * error[i];
 	}
 	return total_error;

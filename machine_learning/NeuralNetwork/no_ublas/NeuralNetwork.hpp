@@ -61,6 +61,7 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 
 			error += output_layer.total_error;
 		}
+		cout << error << endl;
 	}
 }
 

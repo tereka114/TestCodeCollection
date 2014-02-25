@@ -22,19 +22,26 @@ double euclidean_distance(ublas::vector<T> &data1,ublas::vector<T> &data2){
 template <typename T>
 double histogram_intersection(ublas::vector<T> &data1,ublas::vector<T> &data2){
 	double total1,total2 = 0.0;
+	std::cout << data1 << std::endl;
+	std::cout << data2 << std::endl;
 	for(int i = 0; i < data1.size(); i++){
-		total1 += min(data1[i],data2[i]);
-		//total2 += data1[i];
+		double temp = (data1[i] < data2[i]) ? data1[i] : data2[i];
+		total1 += temp;
+		total2 += data1[i];
 	}
-	return total1;
-	//return total1 / total2;
+	//return total1;
+	return total1 / total2;
 }
 
 template <typename T>
 double histogram_chisqr(ublas::vector<T> &data1,ublas::vector<T> &data2){
 	double total = 0.0;
 	for(int i = 0; i < data1.size(); i++){
-		total += pow(data1[i] - data2[i],2.0) / (data1[i]);
+		if(data1[i] == 0){
+			total += 0.0;
+		}else{
+			total += pow(data1[i] - data2[i],2.0) / (data1[i]);
+		}
 	}
 	return total;
 }
@@ -64,6 +71,7 @@ double histogram_correl(ublas::vector<T> &data1,ublas::vector<T> &data2){
 	return result / sqrt(data1_total * data2_total);
 }
 
+//怪しい
 template<typename T>
 double histogram_bhattacharyya(ublas::vector<T> &data1,ublas::vector<T> &data2){
 	double data1_mean = 0.0;

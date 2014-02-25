@@ -102,7 +102,7 @@ void Kmeans::Training(std::vector<ublas::vector<double> > &input){
 	attribute.resize(N);
 
 	Setting();
-	//Scale();
+	Scale();
 	//PrintOutParameter();
 
 	double like; //指標
@@ -167,7 +167,6 @@ ublas::vector<int> Kmeans::Predict(std::vector<ublas::vector<double> > &test){
 	//cout << test[0] << endl;
 	ublas::vector<int> result(test.size());
 	std::vector<ublas::vector<double> > test_data = TestScale(test);
-	//cout << test_data[0] << endl;
 
 	for(int i = 0; i < test.size(); i++){
 		double min_distance = DBL_MAX;

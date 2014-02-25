@@ -13,7 +13,7 @@ using namespace boost::numeric::ublas;
 
 //andのテストデータを生成する。
 void generete_xor(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data){
-	int bit = 3;
+	int bit = 2;
 	int cnt = 1 << bit;
 
 	for(int i = 0; i < cnt; i++){
@@ -59,10 +59,10 @@ void generete_and(std::vector<ublas::vector<double> >& input_data,std::vector<ub
 int main(int argc, char const *argv[])
 {
 	NeuralNetwork nn;
-	nn.SetParameter(2,100,300000);
+	nn.SetParameter(1,2,100000);
 	std::vector<ublas::vector<double> > input_data;
 	std::vector<ublas::vector<double> > label_data;
-	generete_and(input_data,label_data);
+	generete_xor(input_data,label_data);
 
 	nn.Training(input_data,label_data);
 	nn.Check(input_data,label_data);

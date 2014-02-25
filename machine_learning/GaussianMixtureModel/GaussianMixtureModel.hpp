@@ -144,7 +144,7 @@ double GaussianMixtureModel::Likelihood(){
 	double sum = 0.0;
 
 	for(int i = 0; i < N; i++){
-		double temp = 0.0;
+		long double temp = 0.0;
 		for(int j = 0; j < distribution_number; j++){
 			// cout << input_data[i] << endl;
 			// cout << distribution[j].mean << endl;
@@ -193,7 +193,7 @@ void GaussianMixtureModel::Training(std::vector<ublas::vector<double> > &input){
 		//Estep
 		ublas::vector<double> temp_vect(distribution_number); //計算結果を一時的に保存
 		for(int i = 0; i < N;i++){
-			double denominator = 0.0;
+			long double denominator = 0.0;
 			for(int j = 0; j < distribution_number; j++){
 				temp_gaussian[j] = Gaussian(input_data[i],distribution[j].mean,distribution[j].cov,distribution[j].inv_cov,distribution[j].det);
 				denominator += pi[j] * temp_gaussian[j];
@@ -234,7 +234,7 @@ void GaussianMixtureModel::Training(std::vector<ublas::vector<double> > &input){
 
 			pi[k] = Nk / N;
 		}
-		//OutPutParam();
+		OutPutParam();
 		cnt++;
 		ReCalcParam();
 		double new_like = Likelihood();

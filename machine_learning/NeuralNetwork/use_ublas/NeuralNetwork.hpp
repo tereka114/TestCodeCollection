@@ -26,7 +26,7 @@ public:
 	void FeedForward(ublas::vector<double> &one_of_input_data);
 	double Backward(ublas::vector<double> &one_of_label_data);
 	void Training(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
-	void Check(std::vector<ublas::vector<double> >& input_data,std::vector<ublas::vector<double> >& label_data);
+	void Check(std::vector<ublas::vector<double> > &input_data,std::vector<ublas::vector<double> >& label_data);
 	ublas::vector<double> Predict(ublas::vector<double> &test_data);
 	std::vector<ublas::vector<double> > MiddleOut(std::vector<ublas::vector<double> >& input);
 };
@@ -44,11 +44,11 @@ void NeuralNetwork::FeedForward(ublas::vector<double> &one_of_input_data){
 	middle_layer[0].OutPut(one_of_input_data);
 	input_temp = middle_layer[0].data_output;
 
-	for(int i = 1; i < middle_layer_num; i++){
-		middle_layer[i].OutPut(input_temp);
-		input_temp = middle_layer[i].data_output;
-	}
+	// middle_layer[0].OutPut(input_temp);
+	input_temp = middle_layer[0].data_output;
+
 	output_layer.OutPut(input_temp);
+	cout << one_of_input_data << " " << output_layer.data_output << endl;
 }
 
 //後半部分 learning
@@ -57,24 +57,24 @@ double NeuralNetwork::Backward(ublas::vector<double> &one_of_label_data){
 
 	ublas::vector<double> error_temp = output_layer.error;
 	matrix<double> old_weight_temp = output_layer.old_weight;
-	int dimension_temp = output_layer.dimension;
-	int layer_number_temp = output_layer.number;
 
-	//最期まで逆伝搬
-	for(int j = middle_layer_num-1; j >= 0; j--){
-		//std::cout << "check update" << j << std::endl;
-		middle_layer[j].Update(error_temp,old_weight_temp,layer_number_temp,dimension_temp);
-		error_temp = middle_layer[j].error;
-		old_weight_temp = middle_layer[j].old_weight;
-		dimension_temp = middle_layer[j].dimension;
-		layer_number_temp = middle_layer[j].number;
-	}
+	middle_layer[0].Update(error_temp,old_weight_temp);
+	
 	return tmp_error;
+	//最期まで逆伝搬
+		//std::cout << "check update" << j << std::endl;
+	// 	middle_layer[j].Update(error_temp,old_weight_temp,layer_number_temp,dimension_temp);
+	// 	error_temp = middle_layer[j].error;
+	// 	old_weight_temp = middle_layer[j].old_weight;
+	// 	dimension_temp = middle_layer[j].dimension;
+	// 	layer_number_temp = middle_layer[j].number;
+	// }
 }
 
 void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std::vector<ublas::vector<double> >& labeldata){
 	input_data = inputdata;
-	label_data = labeldata;
+	label_data = labeldata;//インスタンス変数と持たなくてもいい。
+
 	srand((unsigned)time(NULL)); 
 	middle_layer[0].SetParameter(middle_neuron_num,input_data[0].size());
 
@@ -83,8 +83,8 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 	}
 
 	output_layer.SetParameter(labeldata[0].size(),middle_neuron_num);
-	std::cout << "training 前" << std::endl;
-	std::cout << "training 開始" << std::endl;
+	std::cerr << "training 前" << std::endl;
+	std::cerr << "training 開始" << std::endl;
 
 	//double before_error = 10000000000.0;
 	for(int n = 0; n < training_time; n++){
@@ -97,6 +97,11 @@ void NeuralNetwork::Training(std::vector<ublas::vector<double> >& inputdata,std:
 		if((n % 50000) == 0){
 			std::cout << n << std::endl;
 			Check(inputdata,labeldata);
+		}
+		std::cout << n+1 << " " << error << std::endl;
+		if(error < 0.01){
+			cout << n+1 << endl;
+			break;
 		}
 	}
 }
