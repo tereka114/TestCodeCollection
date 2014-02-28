@@ -60,9 +60,9 @@ void Sound::FileReadMFCC(){
 	}
 }
 
-void Sound::FileReadWave(string path){
+void Sound::FileReadWave(string path,string mfccfile){
 	wavefile = path;
-	mfccfile = boost::algorithm::replace_all_copy(path,".wav",".txt");
+	mfccfile = mfccfile;
 	SndfileHandle infile(path, SFM_READ);
 	fs = infile.samplerate();
 	channel = infile.channels();
