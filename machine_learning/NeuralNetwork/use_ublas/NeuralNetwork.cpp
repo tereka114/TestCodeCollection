@@ -59,12 +59,13 @@ void generete_and(std::vector<ublas::vector<double> >& input_data,std::vector<ub
 int main(int argc, char const *argv[])
 {
 	NeuralNetwork nn;
-	nn.SetParameter(1,2);
+	nn.SetParameter(1,3);
 	std::vector<ublas::vector<double> > input_data;
 	std::vector<ublas::vector<double> > label_data;
 	generete_xor(input_data,label_data);
 
 	nn.Training(input_data,label_data,100000);
 	nn.Check(input_data,label_data);
+	nn.FileWriteParameter();
 	return 0;
 }

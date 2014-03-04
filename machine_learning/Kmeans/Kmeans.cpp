@@ -39,6 +39,6 @@ int main(void){
 	fileread(input);
 	kmeans.SetParameter(2);
 	kmeans.Training(input);
-	ublas::vector<int> result = kmeans.Test(input);
-	cout << result << endl;
+	//ublas::vector<int> result = kmeans.Test(input);
+	//cout << result << endl;
 }

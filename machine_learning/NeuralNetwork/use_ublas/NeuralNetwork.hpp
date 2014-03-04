@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include <stdlib.h>
+#include <fstream>
 #include <algorithm>
 #include <math.h>
 #include <boost/numeric/ublas/vector.hpp>
@@ -23,6 +25,7 @@ public:
 	void Training(const std::vector<ublas::vector<double> >& input_data,const std::vector<ublas::vector<double> >& label_data,int training);
 	void Check(const std::vector<ublas::vector<double> > &input_data,const std::vector<ublas::vector<double> >& label_data);
 	ublas::vector<double> Predict(ublas::vector<double> &test_data);
+	void FileWriteParameter();
 private:
 	void FeedForward(const ublas::vector<double> &one_of_input_data);
 	double Backward(const ublas::vector<double> &one_of_label_data);
@@ -83,7 +86,7 @@ void NeuralNetwork::Training(const std::vector<ublas::vector<double> >& input_da
 			std::cout << n << std::endl;
 			Check(input_data,label_data);
 		}
-		std::cout << n+1 << " " << error << std::endl;
+		//std::cout << n+1 << " " << error << std::endl;
 		if(error < 0.01){
 			std::cout << n+1 << endl;
 			break;
@@ -132,5 +135,33 @@ void NeuralNetwork::Check(const std::vector<ublas::vector<double> >& test_data,c
 		std::cout << "True" << " " << cnt << std::endl;
 	}else{
 		std::cout << "False" << " " << cnt << std::endl;
+	}
+}
+
+void NeuralNetwork::FileWriteParameter(){
+	ofstream ofs("weight.txt");
+
+	cout << "NeuralNetwork" << endl;
+	cout << middle_layer_num << " " << middle_neuron_num << endl;
+	for(int n = 0; n < middle_layer_num; n++){
+		matrix<double> temp_weight = middle_layer[n].GetWeight();
+		ublas::vector<double> temp_bias = middle_layer[n].GetBias();
+
+		for(int i = 0; i < temp_weight.size1(); i++){
+			string denominator = "";
+			for(int j = 0; j < temp_weight.size2(); j++){
+				ofs << denominator << temp_weight(i,j);
+				denominator = " ";
+			}
+			ofs << endl;
+		}
+
+		string denominator = "";
+		for(int i = 0; i < temp_bias.size(); i++){
+			ofs << denominator << temp_bias[i];
+			denominator = " ";
+		}
+
+		ofs << endl;
 	}
 }

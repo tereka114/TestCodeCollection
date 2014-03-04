@@ -51,6 +51,11 @@ public:
 void Image::ImageRead(string path){
 	image = imread(path);
 	filename = path;
+	cout << filename << endl;
+	// const char *WINDOW_NAME = "lena.png";
+	// cv::namedWindow(WINDOW_NAME, CV_WINDOW_AUTOSIZE);
+	// cv::imshow(WINDOW_NAME, image);
+	// cv::waitKey();
 }
 
 void Image::MatRead(Mat &mat){
@@ -249,4 +254,10 @@ void Image::Resize(int x,int y){
 void Image::GetExtractFeature(string algorithm,std::vector<ublas::vector<double> > &result){
 	Mat mat = feature_descriptors[algorithm];
 	mat2matrix(mat,result);
+	cout << filename << endl;
+	cout << result.size() << endl;
+	// const char *WINDOW_NAME = "lena.png";
+	// cv::namedWindow(WINDOW_NAME, CV_WINDOW_AUTOSIZE);
+	// cv::imshow(WINDOW_NAME, image);
+	// cv::waitKey();
 }

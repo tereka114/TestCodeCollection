@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <float.h>
 #include <math.h>
 #include <vector>
 #include <stdlib.h>
@@ -34,6 +35,7 @@ public:
 	void PrintOutParameter();
 	void Training(std::vector<ublas::vector<double> > &input);
 	ublas::vector<int> Predict(std::vector<ublas::vector<double> > &test);
+	void Gnuplot();
 };
 
 void Kmeans::SetParameter(int cluster_num){
@@ -108,6 +110,7 @@ void Kmeans::Training(std::vector<ublas::vector<double> > &input){
 	double like; //指標
 	double before_like = DBL_MAX; //新しい指標（更新先）
 	int turn = 0;
+
 	while(1){
 		//E-step
 		ublas::vector<double> min_distance(N);
@@ -161,6 +164,7 @@ void Kmeans::Training(std::vector<ublas::vector<double> > &input){
 		}
 		before_like = like;
 	}
+	//Gnuplot();
 }
 
 ublas::vector<int> Kmeans::Predict(std::vector<ublas::vector<double> > &test){
@@ -182,4 +186,18 @@ ublas::vector<int> Kmeans::Predict(std::vector<ublas::vector<double> > &test){
 		result[i] = now_attribute;
 	}
 	return result;
+}
+
+void Kmeans::Gnuplot(){
+	for(int i = 0; i < cluster; i++){
+		for(int j = 0; j < N; j++){
+			if(i == attribute[j]){
+				cout << input_data[j][0] << " " << input_data[j][1] << endl;
+			}
+		}
+		cout << endl;
+	}
+	for(int i = 0; i < N; i++){
+		cout << attribute[i] << endl;
+	}
 }

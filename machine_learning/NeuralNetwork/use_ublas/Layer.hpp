@@ -26,6 +26,8 @@ public:
 	void SetParameter(int n_neuron,int n_input);
 	void OutPut(const ublas::vector<double>& input_data);
 	void Update(ublas::vector<double> &before_error,ublas::matrix<double> &before_old_weight);
+	ublas::matrix<double> GetWeight();
+	ublas::vector<double> GetBias();
 private:
 	double Sigmoid(double d);
 };
@@ -85,4 +87,12 @@ void Layer::Update(ublas::vector<double> &before_error,ublas::matrix<double> &be
 
 		bias[i] += ek * coefficient;
 	}
+}
+
+ublas::matrix<double> Layer::GetWeight(){
+	return weight;
+}
+
+ublas::vector<double> Layer::GetBias(){
+	return bias;
 }
