@@ -51,7 +51,7 @@ public:
 void Image::ImageRead(string path){
 	image = imread(path);
 	filename = path;
-	cout << filename << endl;
+	//cout << filename << endl;
 	// const char *WINDOW_NAME = "lena.png";
 	// cv::namedWindow(WINDOW_NAME, CV_WINDOW_AUTOSIZE);
 	// cv::imshow(WINDOW_NAME, image);
@@ -197,10 +197,10 @@ void Image::FeatureExtract(string algorithm){
 	Mat descriptor;
 	extractor->compute(image,keypoint,descriptor);
 	//cout << descriptor.cols << " "<< descriptor.rows << endl;
-	for(int i = 0; i < descriptor.rows; i++){
-		//Mat d(descriptor, Rect(0,i,descriptor.cols,1));
-		//cout << i << ":" << d << endl;
-	}
+	// for(int i = 0; i < descriptor.rows; i++){
+	// 	//Mat d(descriptor, Rect(0,i,descriptor.cols,1));
+	// 	//cout << i << ":" << d << endl;
+	// }
 	feature_descriptors[algorithm] = descriptor;
 }
 
@@ -253,9 +253,10 @@ void Image::Resize(int x,int y){
 
 void Image::GetExtractFeature(string algorithm,std::vector<ublas::vector<double> > &result){
 	Mat mat = feature_descriptors[algorithm];
+	//cout << mat << endl;
 	mat2matrix(mat,result);
-	cout << filename << endl;
-	cout << result.size() << endl;
+	//scout << filename << endl;
+	//cout << result.size() << endl;
 	// const char *WINDOW_NAME = "lena.png";
 	// cv::namedWindow(WINDOW_NAME, CV_WINDOW_AUTOSIZE);
 	// cv::imshow(WINDOW_NAME, image);

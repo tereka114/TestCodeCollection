@@ -17,17 +17,19 @@ void mat2matrix(Mat& oldmat,std::vector<ublas::vector<double> > &result){
 
 	int row = mat.rows;
 	int col = mat.cols;
-	std::vector<double> v1;
-	mat = mat.reshape(0,1);
-	mat.copyTo(v1);
-	ublas::vector<double> vect(col);
+	if(0 < row){
+		std::vector<double> v1;
+		mat = mat.reshape(0,1);
+		mat.copyTo(v1);
+		ublas::vector<double> vect(col);
 
-	for(int i = 0; i < row; i++){
-		int index = 128 * i;
-		for(int j = 0; j < col; j++){
-			vect[j] = v1[index + j];
+		for(int i = 0; i < row; i++){
+			int index = 128 * i;
+			for(int j = 0; j < col; j++){
+				vect[j] = v1[index + j];
+			}
+			result.push_back(vect);
 		}
-		result.push_back(vect);
 	}
 }
 

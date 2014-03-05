@@ -63,20 +63,20 @@ void Sound::FileReadMFCC(){
 void Sound::FileReadWave(string path,string mfcc_file){
 	wavefile = path;
 	mfccfile = mfcc_file;
-	SndfileHandle infile(path, SFM_READ);
-	fs = infile.samplerate();
-	channel = infile.channels();
-	length = infile.frames();
+	// SndfileHandle infile(path, SFM_READ);
+	// fs = infile.samplerate();
+	// channel = infile.channels();
+	// length = infile.frames();
 
-	short *input = new short[infile.frames()];
-	infile.readf(input, infile.frames());
+	// short *input = new short[infile.frames()];
+	// infile.readf(input, infile.frames());
 
-	filedata.resize(infile.frames());
+	// filedata.resize(infile.frames());
 
-	// print input 
-	for (int i = 0; i < infile.frames(); ++i) {
-	  filedata[i] = input[i] / 32570.0;
-	}
+	// // print input 
+	// for (int i = 0; i < infile.frames(); ++i) {
+	//   filedata[i] = input[i] / 32570.0;
+	// }
 }
 
 void Sound::SetParameterStft(int num1,int num2){

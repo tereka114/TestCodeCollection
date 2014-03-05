@@ -84,7 +84,7 @@ void NeuralNetwork::Training(const std::vector<ublas::vector<double> >& input_da
 		//5万回に一度、チェックする。
 		if((n % 50000) == 0){
 			std::cout << n << std::endl;
-			Check(input_data,label_data);
+			//Check(input_data,label_data);
 		}
 		//std::cout << n+1 << " " << error << std::endl;
 		if(error < 0.01){
@@ -139,7 +139,7 @@ void NeuralNetwork::Check(const std::vector<ublas::vector<double> >& test_data,c
 }
 
 void NeuralNetwork::FileWriteParameter(){
-	ofstream ofs("weight.txt");
+	std::ofstream ofs("weight.txt");
 
 	cout << "NeuralNetwork" << endl;
 	cout << middle_layer_num << " " << middle_neuron_num << endl;
